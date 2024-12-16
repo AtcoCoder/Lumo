@@ -1,9 +1,12 @@
 """db module"""
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from models.base_model import Base
+from sqlalchemy.orm import scoped_session, sessionmaker
+from config import DevelopmentConfig
 
+URL = DevelopmentConfig.DATABASE_URI
 
-URL = ""
 
 class DB():
     """Database class"""
@@ -12,6 +15,12 @@ class DB():
     def __init__(self) -> None:
         """Instance Initializer"""
         self.__engine = create_engine(URL)
+
+    def reload(self):
+        """reloads the database and creates scoped session"""
+        Base.metadata.create_all(self.__engine)
+        sessn_factory = sessionmaker(bind=self.__engine)
+        self.__session = scoped_session(sessn_factory)
 
     def all(self, cls=None):
         """returns all members of every table if
