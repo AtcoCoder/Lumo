@@ -23,6 +23,7 @@ class DB():
     def add(self, obj):
         """Add object (obj) to the session
         """
+        self.__session.add(obj)
     
     def save(self):
         """Commit all changes of the current session
