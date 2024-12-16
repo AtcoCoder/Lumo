@@ -27,7 +27,9 @@ class DB():
         no table is specified else all
         members of the table specified
         """
-        return None
+        from models.user import User
+        objs = self.__session.query(User).all()
+        return objs
     
     def add(self, obj):
         """Add object (obj) to the session

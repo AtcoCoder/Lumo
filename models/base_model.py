@@ -20,11 +20,15 @@ class BaseModel(Base):
     created_at = Column(DateTime, default=datetime.datetime.now(tz=UTC))
     updated_at = Column(DateTime, default=datetime.datetime.now(tz=UTC))
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         """instance initializer"""
         self.id = str(uuid.uuid4())
         self.created_at = datetime.datetime.now(tz=UTC)
         self.updated_at = datetime.datetime.now(tz=UTC)
+        if kwargs:
+            for key, value in kwargs.items():
+                if key not in ['id', 'created_at', 'updated_at']:
+                    setattr(self, key, value)
     
     def __str__(self) -> str:
         """String representation of the base model instance"""
@@ -36,8 +40,8 @@ class BaseModel(Base):
     
     def save(self):
         """adds instance object to the database"""
-        #db.add(self)
-        #db.save()
+        db.add(self)
+        db.save()
 
     def to_dict(self):
         """returns key/values pairs of the
@@ -52,7 +56,7 @@ class BaseModel(Base):
 
     def delete(self):
         """delete instance object from database"""
-        #db.delete(self)
+        db.delete(self)
 
     def update(self, **kwargs):
         """Updates the attrs (keys) with the values
@@ -63,4 +67,4 @@ class BaseModel(Base):
             if attr not in unchangeables:
                 setattr(self, attr, new_value)
         self.updated_at = datetime.datetime.now(tz=UTC)
-        # db.save()
+        db.save()
