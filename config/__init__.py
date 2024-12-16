@@ -14,7 +14,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     """Development configurations"""
-    DATABASE_URI = ''
+    DATABASE_URI = 'sqlite:///lumo.db'
     DEBUG = True
     SECRET_KEY = 'dev'
 
