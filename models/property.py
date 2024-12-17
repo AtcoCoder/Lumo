@@ -27,6 +27,7 @@ class Property(BaseModel):
     property_type = mapped_column(Enum('rent', 'sale'), nullable=False)
     is_active = mapped_column(Boolean, nullable=True)
     city_id = mapped_column(ForeignKey('cities.id'))
+    city = relationship('City', back_populates='properties')
     amenities = relationship(
         'Amenity', secondary=property_amenity, back_populates='properties'
     )

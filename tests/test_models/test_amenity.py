@@ -1,5 +1,5 @@
 from models.amenity import Amenity
-from models.base_model import Base
+from models.base_model import BaseModel
 import unittest
 
 
@@ -14,7 +14,7 @@ class TestAmenity(unittest.TestCase):
         """Test that amenity is subclass of
         Base
         """
-        self.assertTrue(issubclass(Amenity, Base))
+        self.assertTrue(issubclass(Amenity, BaseModel))
     
     def test_amenity_attrs(self):
         """Test that amenity has right attrs"""
@@ -23,3 +23,8 @@ class TestAmenity(unittest.TestCase):
         self.assertTrue(hasattr(self.amenity, 'created_at'))
         self.assertTrue(hasattr(self.amenity, 'updated_at'))
         self.assertTrue(hasattr(self.amenity, 'properties'))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Deletes amenity object"""
+        del cls.amenity
