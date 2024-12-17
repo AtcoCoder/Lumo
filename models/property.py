@@ -28,6 +28,7 @@ class Property(BaseModel):
     is_active = mapped_column(Boolean, nullable=True)
     city_id = mapped_column(ForeignKey('cities.id'))
     city = relationship('City', back_populates='properties')
+    images = relationship()
     amenities = relationship(
         'Amenity', secondary=property_amenity, back_populates='properties'
     )

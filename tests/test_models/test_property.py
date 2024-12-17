@@ -92,6 +92,7 @@ class TestProperty(unittest.TestCase):
         self.assertTrue(hasattr(self.property, 'city_id'))
         self.assertTrue(hasattr(self.property, 'user_id'))
         self.assertTrue(hasattr(self.property, 'amenities'))
+        self.assertTrue(hasattr(self.property, 'images'))
     
     @classmethod
     def tearDownClass(cls) -> None:

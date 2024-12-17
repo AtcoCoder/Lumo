@@ -22,8 +22,13 @@ class TestImage(unittest.TestCase):
         self.assertTrue(hasattr(self.image, 'id'))
         self.assertTrue(hasattr(self.image, 'created_at'))
         self.assertTrue(hasattr(self.image, 'updated_at'))
-        self.assertTrue(hasattr(self.image, 'name'))
-        self.assertTrue(hasattr(self.image, 'areas'))
+        self.assertTrue(hasattr(self.image, 'image_url'))
+        self.assertTrue(hasattr(self.image, 'property_id'))
+    
+    def test_image_upload_time(self):
+        """Test that image upload time
+        is the same as created_at time"""
+        self.assertEqual(self.image.created_at, self.image.uploaded_at)
     
     @classmethod
     def tearDownClass(cls) -> None:
