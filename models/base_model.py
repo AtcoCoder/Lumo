@@ -1,9 +1,11 @@
 """Base Model module"""
 from sqlalchemy.orm import DeclarativeBase
 import datetime
+from models import db
 from sqlalchemy import Column, String, DateTime
 import uuid
 
+DATETIME = '%Y-%m-%dT%H:%M:%S'
 UTC = datetime.timezone.utc
 
 
@@ -49,8 +51,12 @@ class BaseModel(Base):
         """
         instance_attrs = self.__dict__.copy()
         instance_attrs['__class__'] = self.__class__.__name__
-        if 'password' in instance_attrs:
+        if 'password_hash' in instance_attrs:
             del instance_attrs['password']
+        if 'created_at' in instance_attrs:
+            instance_attrs['created_at'] = instance_attrs['created_at'].strftime(DATETIME)
+        if 'updated_at' in instance_attrs:
+            instance_attrs['updated_at'] = instance_attrs['updated_at'].strftime(DATETIME)
         instance_attrs.pop('_sa_instance_state', None)
         return instance_attrs
 
@@ -68,3 +74,8 @@ class BaseModel(Base):
                 setattr(self, attr, new_value)
         self.updated_at = datetime.datetime.now(tz=UTC)
         db.save()
+    
+    def validate_value(self, attr, val_type, value):
+        """Validates input value"""
+        if type(value) != val_type:
+            raise ValueError(f'{attr} must be {val_type}!')

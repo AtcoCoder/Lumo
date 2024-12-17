@@ -1,7 +1,6 @@
 """db module"""
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from models.base_model import Base
 from sqlalchemy.orm import scoped_session, sessionmaker
 from config import DevelopmentConfig
 
@@ -18,6 +17,7 @@ class DB():
 
     def reload(self):
         """reloads the database and creates scoped session"""
+        from models.base_model import Base
         Base.metadata.create_all(self.__engine)
         sessn_factory = sessionmaker(bind=self.__engine)
         self.__session = scoped_session(sessn_factory)
