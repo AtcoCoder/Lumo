@@ -1,8 +1,11 @@
 """Base Model module"""
+from typing import List
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 import datetime
 from models import db
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import String, DateTime
 import uuid
 
 DATETIME = '%Y-%m-%dT%H:%M:%S'
@@ -18,9 +21,9 @@ class BaseModel(Base):
     """Base Model class"""
     # Mark as abstract so it doesn't create a table
     __abstract__ = True
-    id = Column(String(64), primary_key=True)
-    created_at = Column(DateTime, default=datetime.datetime.now(tz=UTC))
-    updated_at = Column(DateTime, default=datetime.datetime.now(tz=UTC))
+    id = mapped_column(String(64), primary_key=True)
+    created_at = mapped_column(DateTime, default=datetime.datetime.now(tz=UTC))
+    updated_at = mapped_column(DateTime, default=datetime.datetime.now(tz=UTC))
 
     def __init__(self, **kwargs) -> None:
         """instance initializer"""

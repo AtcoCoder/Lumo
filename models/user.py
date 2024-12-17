@@ -1,6 +1,8 @@
 """User class Module"""
-from typing import Any
+from typing import Any, List
 from sqlalchemy import Column, String
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 from models.base_model import BaseModel
 
 NOT_NULLABLES = [
@@ -21,11 +23,12 @@ NOT_NULLABLES = [
 class User(BaseModel):
     """User class"""
     __tablename__ = 'users'
-    username = Column(String(64), nullable=False, unique=True)
-    email = Column(String(128), nullable=False, unique=True)
-    password_hash = Column(String(255), nullable=False)
-    phone_number = Column(String(16), nullable=False)
-    whatsapp = Column(String(16), nullable=True)
+    username = mapped_column(String(64), nullable=False, unique=True)
+    email = mapped_column(String(128), nullable=False, unique=True)
+    password_hash = mapped_column(String(255), nullable=False)
+    phone_number = mapped_column(String(16), nullable=False)
+    whatsapp = mapped_column(String(16), nullable=True)
+    properties = ""
 
     def __init__(self, **kwargs) -> None:
         """Instance Initializer"""
