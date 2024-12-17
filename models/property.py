@@ -3,8 +3,7 @@ import enum
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import String, Integer, ForeignKey, Text
 from sqlalchemy import Enum, Boolean
-from models.base_model import BaseModel
-from models.amenity import property_amenity
+from models.base_model import BaseModel, property_amenity
 from sqlalchemy.orm import relationship
 
 NOT_NULLABLES = [

@@ -5,14 +5,8 @@ from sqlalchemy import (
     Column
 )
 from sqlalchemy.orm import mapped_column, relationship
-from models.base_model import Base, BaseModel
 
-
-property_amenity = Table(
-    'property_amenity', Base.metadata,
-    Column('property_id', String(60), ForeignKey('properties.id'), primary_key=True),
-    Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True)
-)
+from models.base_model import BaseModel, property_amenity
 
 
 class Amenity(BaseModel):
