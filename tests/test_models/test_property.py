@@ -74,6 +74,25 @@ class TestProperty(unittest.TestCase):
         """Test that BaseModel is superclass
         of Property"""
         self.assertTrue(issubclass(Property, BaseModel))
+    
+    def test_title_attr(self):
+        """Test that property has title attr"""
+        self.assertTrue(hasattr(self.property, 'title'))
+    
+    def test_property_attrs(self):
+        """Test that property has all attrs"""
+        self.assertTrue(hasattr(self.property, 'description'))
+        self.assertTrue(hasattr(self.property, 'price'))
+        self.assertTrue(hasattr(self.property, 'location'))
+        self.assertTrue(hasattr(self.property, 'property_type'))
+        self.assertTrue(hasattr(self.property, 'is_active'))
+        self.assertTrue(hasattr(self.property, 'created_at'))
+        self.assertTrue(hasattr(self.property, 'updated_at'))
+        self.assertTrue(hasattr(self.property, 'size'))
+        self.assertTrue(hasattr(self.property, 'city_id'))
+        self.assertTrue(hasattr(self.property, 'user_id'))
+        self.assertTrue(hasattr(self.property, 'amenities'))
+
         
     @classmethod
     def tearDownClass(cls) -> None:
