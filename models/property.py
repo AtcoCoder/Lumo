@@ -3,7 +3,8 @@ import enum
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import String, Integer, ForeignKey, Text
 from sqlalchemy import Enum, Boolean
-from models.base_model import BaseModel, property_amenity
+from models.base_model import BaseModel
+from models.amenity import property_amenity
 from sqlalchemy.orm import relationship
 
 NOT_NULLABLES = [
@@ -27,10 +28,10 @@ class Property(BaseModel):
     is_active = mapped_column(Boolean, nullable=True)
     city_id = mapped_column(ForeignKey('cities.id'))
     city = relationship('City', back_populates='properties')
-    images = relationship()
     amenities = relationship(
         'Amenity', secondary=property_amenity, back_populates='properties'
     )
+    images = relationship('Image', backref='property')
 
     def __init__(self, **kwargs) -> None:
         for not_null in NOT_NULLABLES:

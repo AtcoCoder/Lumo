@@ -5,13 +5,7 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 import datetime
 from models import db
-from sqlalchemy import (
-    String,
-    DateTime,
-    Column,
-    ForeignKey,
-    Table
-)
+from sqlalchemy import String, DateTime
 import uuid
 
 DATETIME = '%Y-%m-%dT%H:%M:%S'
@@ -21,13 +15,6 @@ UTC = datetime.timezone.utc
 class Base(DeclarativeBase):
     """declarative base class"""
     pass
-
-
-property_amenity = Table(
-    'property_amenity', Base.metadata,
-    Column('property_id', String(60), ForeignKey('properties.id'), primary_key=True),
-    Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True)
-)
 
 
 class BaseModel(Base):
