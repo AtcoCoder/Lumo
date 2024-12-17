@@ -52,7 +52,7 @@ class BaseModel(Base):
         instance_attrs = self.__dict__.copy()
         instance_attrs['__class__'] = self.__class__.__name__
         if 'password_hash' in instance_attrs:
-            del instance_attrs['password']
+            del instance_attrs['password_hash']
         if 'created_at' in instance_attrs:
             instance_attrs['created_at'] = instance_attrs['created_at'].strftime(DATETIME)
         if 'updated_at' in instance_attrs:

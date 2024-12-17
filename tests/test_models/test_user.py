@@ -11,15 +11,18 @@ PASSWORD = 'secret'
 
 class TestUser(unittest.TestCase):
     """Test suite for the User class"""
-    def test_create_user(self):
-        """create user instance test case"""
-        user = User(
+    @classmethod
+    def setUpClass(cls):
+        """Creates user instance for multiple tests"""
+        cls.user = User(
             email=EMAIL,
             username=USERNAME,
             phone_number=PHONE,
             password_hash=PASSWORD
         )
-        self.assertTrue(isinstance(user, User))
+    def test_create_user(self):
+        """create user instance test case"""
+        self.assertTrue(isinstance(self.user, User))
     
     def test_user_superclass(self):
         """test user superclass"""
@@ -114,7 +117,7 @@ class TestUser(unittest.TestCase):
         new_dict = user.to_dict()
         self.assertEqual(type(new_dict), dict)
         for attr in user.__dict__:
-            if attr != '_sa_instance_state':
+            if attr != '_sa_instance_state' and attr != 'password_hash':
                 self.assertTrue(attr in new_dict)
         self.assertTrue('__class__' in new_dict)
     
@@ -229,3 +232,38 @@ class TestUser(unittest.TestCase):
                 phone_number=PHONE,
                 whatsapp=123458
             )
+
+    def test_email_update(self):
+        """Test that input is validated at
+        email update
+        """
+        with self.assertRaises(ValueError):
+            self.user.email = 10
+    
+    def test_username_update(self):
+        """Test that input is validated for
+        username update
+        """
+        with self.assertRaises(ValueError):
+            self.user.username = None
+    
+    def test_phone_number_update(self):
+        """Test that input is validated for
+        phone number update
+        """
+        with self.assertRaises(ValueError):
+            self.user.phone_number = [0]
+    
+    def test_password_hash_update(self):
+        """Test that input is validated for
+        password_hash update
+        """
+        with self.assertRaises(ValueError):
+            self.user.password_hash = ()
+    
+    def test_whatsapp_update(self):
+        """Test that input is validated for
+        whatsapp update
+        """
+        with self.assertRaises(ValueError):
+            self.user.whatsapp = 10.10
