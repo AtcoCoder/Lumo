@@ -19,7 +19,10 @@ class DevelopmentConfig(Config):
     SECRET_KEY = 'dev'
 
 
-class TestignConfig(Config):
+class TestingConfig(Config):
     """Testing Configurations"""
     DATABASE_URI = ''
     TESTING = True
+
+
+CURRENT_CONFIG = TestingConfig
