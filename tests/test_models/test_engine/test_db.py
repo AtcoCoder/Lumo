@@ -22,7 +22,7 @@ class TestDB(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Drops tables and close the database session"""
-        cls.db.reset()
+        # cls.db.reset()
         cls.db.close()
     
     def setUp(self):

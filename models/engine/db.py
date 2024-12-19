@@ -80,8 +80,3 @@ class DB():
         """
         results = self.all(cls)
         return len(results)
-    
-    def reset(self):
-        """Drop all tables"""
-        from models.base_model import Base
-        Base.metadata.drop_all(bind=self.__engine)
