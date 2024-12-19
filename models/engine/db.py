@@ -105,7 +105,7 @@ class DB():
         if column == 'email':
             result = self.__session.query(User).filter_by(email=value).first()
         else:
-            result = self.__session.query(User).filter_by(_username=value).first()
+            result = self.__session.query(User).filter_by(username=value).first()
         return result
     
     def delete(self, obj):

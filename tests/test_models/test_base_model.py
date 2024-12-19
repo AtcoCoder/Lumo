@@ -115,7 +115,6 @@ class TestBaseModel(unittest.TestCase):
                 id='newid'
             )
 
-    
     @classmethod
     def tearDownClass(cls) -> None:
         """Deletes the base model object"""
