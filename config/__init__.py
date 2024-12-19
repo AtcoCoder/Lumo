@@ -21,7 +21,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Testing Configurations"""
-    DATABASE_URI = ''
+    DATABASE_URI = 'sqlite:///:memory:'
     TESTING = True
 
 

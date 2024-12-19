@@ -2,25 +2,30 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
-from config import DevelopmentConfig
 
-URL = DevelopmentConfig.DATABASE_URI
+# URL = DevelopmentConfig.DATABASE_URI
 
 
 class DB():
     """Database class"""
     __session = None
     __engine = None
-    def __init__(self) -> None:
+    def __init__(self, db_url) -> None:
         """Instance Initializer"""
-        self.__engine = create_engine(URL)
+        self.__engine = create_engine(db_url)
+    
+    @property
+    def session(self):
+        """Returns database session"""
+        return self.__session
 
     def reload(self):
         """reloads the database and creates scoped session"""
         from models.base_model import Base
         Base.metadata.create_all(self.__engine)
         sessn_factory = sessionmaker(bind=self.__engine)
-        self.__session = scoped_session(sessn_factory)
+        Session = scoped_session(sessn_factory)
+        self.__session = Session
 
     def all(self, cls=None):
         """returns all members of every table if
@@ -28,7 +33,23 @@ class DB():
         members of the table specified
         """
         from models.user import User
-        objs = self.__session.query(User).all()
+        from models.property import Property
+        from models.city import City
+        from models.area import Area
+        from models.region import Region
+        from models.amenity import Amenity
+        from models.image import Image
+        classes = {
+            'User': User,
+            'Property': Property,
+            'City': City,
+            'Area': Area,
+            'Region': Region,
+            'Amenity': Amenity,
+            'Image': Image
+        }
+        if cls:
+            objs = self.__session.query(classes[cls]).all()
         return objs
     
     def add(self, obj):
@@ -44,15 +65,23 @@ class DB():
     def close(self):
         """Closes the current session
         """
+        self.__session.close()
         self.__session.remove()
     
     def get(self, cls, id):
         """Finds and returns an object base id
         """
-        return None
+        user = self.__session.query(cls).filter_by(id=id).first()
+        return user
     
-    def count(self):
+    def count(self, cls=None):
         """Count the number of members of 
         table(cls) and return the number
         """
-        return 0
+        results = self.all(cls)
+        return len(results)
+    
+    def reset(self):
+        """Drop all tables"""
+        from models.base_model import Base
+        Base.metadata.drop_all(bind=self.__engine)
