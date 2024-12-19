@@ -4,7 +4,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 import datetime
-from models import db
+import models
 from sqlalchemy import String, DateTime
 import uuid
 
@@ -45,8 +45,8 @@ class BaseModel(Base):
     
     def save(self):
         """adds instance object to the database"""
-        db.add(self)
-        db.save()
+        models.db.add(self)
+        models.db.save()
 
     def to_dict(self):
         """returns key/values pairs of the
@@ -65,7 +65,8 @@ class BaseModel(Base):
 
     def delete(self):
         """delete instance object from database"""
-        db.delete(self)
+        models.db.delete(self)
+        models.db.save()
 
     def update(self, **kwargs):
         """Updates the attrs (keys) with the values
@@ -75,10 +76,19 @@ class BaseModel(Base):
         for attr, new_value in kwargs.items():
             if attr not in unchangeables:
                 setattr(self, attr, new_value)
+            else:
+                raise TypeError(f'Cannot change {attr}')
         self.updated_at = datetime.datetime.now(tz=UTC)
-        db.save()
+        models.db.save()
     
     def validate_value(self, attr, val_type, value):
         """Validates input value"""
         if type(value) != val_type:
             raise ValueError(f'{attr} must be {val_type}!')
+    
+    @classmethod
+    def get(cls, id):
+        """Gets object by id"""
+        result = models.db.get(id, cls=cls)
+        return result
+    

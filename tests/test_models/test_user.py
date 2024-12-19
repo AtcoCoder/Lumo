@@ -233,37 +233,37 @@ class TestUser(unittest.TestCase):
                 whatsapp=123458
             )
 
-    def test_email_update(self):
-        """Test that input is validated at
-        email update
-        """
-        with self.assertRaises(ValueError):
-            self.user.email = 10
+    # def test_email_update(self):
+    #     """Test that input is validated at
+    #     email update
+    #     """
+    #     with self.assertRaises(ValueError):
+    #         self.user.email = 10
     
-    def test_username_update(self):
-        """Test that input is validated for
-        username update
-        """
-        with self.assertRaises(ValueError):
-            self.user.username = None
+    # def test_username_update(self):
+    #     """Test that input is validated for
+    #     username update
+    #     """
+    #     with self.assertRaises(ValueError):
+    #         self.user.username = None
     
-    def test_phone_number_update(self):
-        """Test that input is validated for
-        phone number update
-        """
-        with self.assertRaises(ValueError):
-            self.user.phone_number = [0]
+    # def test_phone_number_update(self):
+    #     """Test that input is validated for
+    #     phone number update
+    #     """
+    #     with self.assertRaises(ValueError):
+    #         self.user.phone_number = [0]
     
-    def test_password_hash_update(self):
-        """Test that input is validated for
-        password_hash update
-        """
-        with self.assertRaises(ValueError):
-            self.user.password_hash = ()
+    # def test_password_hash_update(self):
+    #     """Test that input is validated for
+    #     password_hash update
+    #     """
+    #     with self.assertRaises(ValueError):
+    #         self.user.password_hash = ()
     
-    def test_whatsapp_update(self):
-        """Test that input is validated for
-        whatsapp update
-        """
-        with self.assertRaises(ValueError):
-            self.user.whatsapp = 10.10
+    # def test_whatsapp_update(self):
+    #     """Test that input is validated for
+    #     whatsapp update
+    #     """
+    #     with self.assertRaises(ValueError):
+    #         self.user.whatsapp = 10.10

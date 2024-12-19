@@ -2,6 +2,27 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.exc import UnmappedInstanceError
+from sqlalchemy.orm import aliased
+from models.user import User
+from models.property import Property
+from models.city import City
+from models.area import Area
+from models.region import Region
+from models.amenity import Amenity
+from models.image import Image
+from config import CURRENT_CONFIG
+classes = {
+    'User': User,
+    'Property': Property,
+    'City': City,
+    'Area': Area,
+    'Region': Region,
+    'Amenity': Amenity,
+    'Image': Image
+}
+
+class_list = [User, Property, City, Area, Region, Amenity, Image]
 
 # URL = DevelopmentConfig.DATABASE_URI
 
@@ -31,30 +52,22 @@ class DB():
         """returns all members of every table if
         no table is specified else all
         members of the table specified
-        """
-        from models.user import User
-        from models.property import Property
-        from models.city import City
-        from models.area import Area
-        from models.region import Region
-        from models.amenity import Amenity
-        from models.image import Image
-        classes = {
-            'User': User,
-            'Property': Property,
-            'City': City,
-            'Area': Area,
-            'Region': Region,
-            'Amenity': Amenity,
-            'Image': Image
-        }
+        """ 
         if cls:
             objs = self.__session.query(classes[cls]).all()
-        return objs
+
+            return objs
+        else:
+            raise TypeError('Class must be specified')
     
-    def add(self, obj):
+    def add(self, obj=None):
         """Add object (obj) to the session
         """
+        if not obj:
+            raise TypeError('Object cannot be none')
+        valid_obj = [obj for cls in class_list if isinstance(obj, cls)]
+        if not valid_obj:
+            raise TypeError('Not a valid object')
         self.__session.add(obj)
     
     def save(self):
@@ -68,11 +81,17 @@ class DB():
         self.__session.close()
         self.__session.remove()
     
-    def get(self, cls, id):
+    def get(self, id, cls=None):
         """Finds and returns an object base id
         """
-        user = self.__session.query(cls).filter_by(id=id).first()
-        return user
+        if not cls:
+            raise TypeError('Class cannot be None')
+        if not isinstance(id, str):
+            raise TypeError('id must be a string')
+        
+
+        result = self.__session.query(cls).filter_by(id=id).first()
+        return result
     
     def count(self, cls=None):
         """Count the number of members of 
@@ -80,3 +99,25 @@ class DB():
         """
         results = self.all(cls)
         return len(results)
+    
+    def get_by(self, column, value):
+        """Gets user by email or username"""
+        if column == 'email':
+            result = self.__session.query(User).filter_by(email=value).first()
+        else:
+            result = self.__session.query(User).filter_by(_username=value).first()
+        return result
+    
+    def delete(self, obj):
+        """Deletes object from the database"""
+        try:
+            self.__session.delete(obj)
+        except Exception:
+            pass
+    
+    def drop(self):
+        """Drops all tables"""
+        if CURRENT_CONFIG.TESTING:
+            from models.base_model import Base
+            Base.metadata.drop_all(bind=self.__engine)
+
