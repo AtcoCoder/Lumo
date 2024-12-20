@@ -32,7 +32,7 @@ class User(BaseModel):
     password_hash = mapped_column(String(255), nullable=False)
     phone_number = mapped_column(String(16), nullable=False)
     whatsapp = mapped_column(String(16), nullable=True)
-    properties = ""
+    properties = relationship('Property', backref='user')
 
     def __init__(self, **kwargs) -> None:
         """Instance Initializer"""
@@ -42,8 +42,10 @@ class User(BaseModel):
         
         for attr in STRINGs:
             if attr in kwargs:
-                if attr != 'whatsapp':
-                    self.validate_value(attr, str, kwargs[attr])
+                value = kwargs[attr]
+                if attr == 'whatsapp' and attr is None:
+                    value = 'null'
+                self.validate_value(attr, str, value)
         super().__init__(**kwargs)
     
     def is_valid(self, password):

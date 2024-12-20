@@ -57,7 +57,7 @@ class TestDB(unittest.TestCase):
     
     def test_count(self):
         """Test counting of class objects"""
-        users_count = self.db.count('User')
+        users_count = self.db.count(User)
         new_user = User(
             username='jammeh',
             email='jammeh@email.com',
@@ -66,7 +66,7 @@ class TestDB(unittest.TestCase):
         )
         self.db.add(new_user)
         self.db.save()
-        new_count = self.db.count('User')
+        new_count = self.db.count(User)
         self.assertEqual(new_count, users_count + 1)
     
     def test_add_not_valid_model(self):
