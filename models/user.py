@@ -4,6 +4,10 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from models.base_model import BaseModel
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
 
 NOT_NULLABLES = [
     'password_hash',
@@ -40,6 +44,10 @@ class User(BaseModel):
             if attr in kwargs:
                 self.validate_value(attr, str, kwargs[attr])
         super().__init__(**kwargs)
+    
+    def is_valid(self, password):
+        """Verifies password"""
+        return check_password_hash(self.password_hash, password)
     
     # # @property
     # # def email(self):

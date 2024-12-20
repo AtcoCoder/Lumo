@@ -232,6 +232,17 @@ class TestUser(unittest.TestCase):
                 phone_number=PHONE,
                 whatsapp=123458
             )
+    
+    def test_is_not_valid(self):
+        """Test verifying password method"""
+        is_valid = self.user.is_valid('password')
+        self.assertFalse(is_valid)
+    
+    def test_is_valid(self):
+        """Test verifying correct password"""
+        is_valid = self.user.is_valid('secret')
+        self.assertTrue(is_valid)
+
 
     # def test_email_update(self):
     #     """Test that input is validated at
