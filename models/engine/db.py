@@ -54,7 +54,7 @@ class DB():
         members of the table specified
         """ 
         if cls:
-            objs = self.__session.query(classes[cls]).all()
+            objs = self.__session.query(cls).all()
 
             return objs
         else:

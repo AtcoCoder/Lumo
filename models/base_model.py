@@ -92,3 +92,9 @@ class BaseModel(Base):
         result = models.db.get(id, cls=cls)
         return result
     
+    @classmethod
+    def get_all(cls):
+        result = models.db.all(cls)
+        objs = [obj.to_dict() for obj in result]
+        return objs
+    

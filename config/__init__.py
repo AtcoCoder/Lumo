@@ -25,4 +25,4 @@ class TestingConfig(Config):
     TESTING = True
 
 
-CURRENT_CONFIG = TestingConfig
+CURRENT_CONFIG = DevelopmentConfig

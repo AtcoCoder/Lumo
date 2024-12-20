@@ -49,6 +49,23 @@ class User(BaseModel):
         """Verifies password"""
         return check_password_hash(self.password_hash, password)
     
+    def login(self, email, password):
+        """Logs user in"""
+        pass
+    
+    @classmethod
+    def get_by_email(self, email):
+        """Gets user by email"""
+        import models
+        return models.db.get_by('email', email)
+    
+    @classmethod
+    def get_by_username(self, username):
+        """Gets user by username"""
+        import models
+        return models.db.get_by('username', username)
+
+    
     # # @property
     # # def email(self):
     # #     """Email getter method"""

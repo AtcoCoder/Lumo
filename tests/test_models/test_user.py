@@ -19,8 +19,9 @@ class TestUser(unittest.TestCase):
             email=EMAIL,
             username=USERNAME,
             phone_number=PHONE,
-            password_hash=
+            password_hash=PASSWORD
         )
+
     def test_create_user(self):
         """create user instance test case"""
         self.assertTrue(isinstance(self.user, User))
@@ -243,7 +244,6 @@ class TestUser(unittest.TestCase):
         """Test verifying correct password"""
         is_valid = self.user.is_valid('secret')
         self.assertTrue(is_valid)
-
 
     # def test_email_update(self):
     #     """Test that input is validated at
