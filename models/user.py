@@ -42,7 +42,8 @@ class User(BaseModel):
         
         for attr in STRINGs:
             if attr in kwargs:
-                self.validate_value(attr, str, kwargs[attr])
+                if attr != 'whatsapp':
+                    self.validate_value(attr, str, kwargs[attr])
         super().__init__(**kwargs)
     
     def is_valid(self, password):
