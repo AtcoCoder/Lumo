@@ -1,12 +1,13 @@
 from models.user import User
 from models.base_model import BaseModel, Base
 import unittest
+from werkzeug.security import generate_password_hash
 
 EMAIL = 'orms@email.com'
 USERNAME = 'atcocoder'
 PHONE = '12345678'
 WHATSAPP = '12345678'
-PASSWORD = 'secret'
+PASSWORD = generate_password_hash('secret', method="pbkdf2:sha256", salt_length=8)
 
 
 class TestUser(unittest.TestCase):
@@ -18,7 +19,7 @@ class TestUser(unittest.TestCase):
             email=EMAIL,
             username=USERNAME,
             phone_number=PHONE,
-            password_hash=PASSWORD
+            password_hash=
         )
     def test_create_user(self):
         """create user instance test case"""
