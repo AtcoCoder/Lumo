@@ -58,4 +58,23 @@ def get_user(user_id):
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not Found'), 400
-    return jsonify(user=user.to_dict())
+    return jsonify(user=user.to_dict)
+
+@app_views.route(
+    '/users/login',
+    strict_slashes=False,
+    methods=['GET', 'POST']
+)
+def user_login():
+    """Login route"""
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if email and password:
+            user = User.get_by_email(email)
+        else:
+            return jsonify(message='Missing field'), 400
+        if not user:
+            return jsonify(message='User does not exist'), 400
+        if user.is_valid(password):
+            

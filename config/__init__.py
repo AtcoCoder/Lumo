@@ -14,7 +14,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     """Development configurations"""
-    DATABASE_URI = 'sqlite:///lumo.db'
+    DATABASE_URI = 'mysql+mysqlconnector://atcocoder0:password@localhost/Lumo'
     DEBUG = True
     SECRET_KEY = 'dev'
 
@@ -25,4 +25,4 @@ class TestingConfig(Config):
     TESTING = True
 
 
-CURRENT_CONFIG = TestingConfig
+CURRENT_CONFIG = DevelopmentConfig

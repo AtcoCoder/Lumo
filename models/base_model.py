@@ -22,8 +22,8 @@ class BaseModel(Base):
     # Mark as abstract so it doesn't create a table
     __abstract__ = True
     id = mapped_column(String(64), primary_key=True)
-    created_at = mapped_column(DateTime, default=datetime.datetime.now(tz=UTC))
-    updated_at = mapped_column(DateTime, default=datetime.datetime.now(tz=UTC))
+    created_at = mapped_column(DateTime, nullable=False, default=datetime.datetime.now(tz=UTC))
+    updated_at = mapped_column(DateTime, nullable=False, default=datetime.datetime.now(tz=UTC))
 
     def __init__(self, **kwargs) -> None:
         """instance initializer"""
