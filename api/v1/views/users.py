@@ -2,6 +2,9 @@
 from api.v1.views import app_views
 from flask import jsonify, request
 from models.user import User
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 from werkzeug.security import (
     generate_password_hash,
     check_password_hash
@@ -77,4 +80,8 @@ def user_login():
         if not user:
             return jsonify(message='User does not exist'), 400
         if user.is_valid(password):
-            
+            access_token = create_access_token(identity=user.username)
+            return jsonify(access_token=access_token)
+        return jsonify(message='Incorrect password')
+
+@app_views.route('/users/logout')

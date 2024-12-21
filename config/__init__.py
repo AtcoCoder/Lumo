@@ -10,6 +10,7 @@ class ProductionConfig(Config):
     """Production configurations"""
     DATABASE_URI = ''
     SECRET_KEY = ''
+    JWT_SECRET_KEY = ''
 
 
 class DevelopmentConfig(Config):
@@ -17,6 +18,7 @@ class DevelopmentConfig(Config):
     DATABASE_URI = 'mysql+mysqlconnector://atcocoder0:password@localhost/Lumo'
     DEBUG = True
     SECRET_KEY = 'dev'
+    JWT_SECRET_KEY = 'secret_key'
 
 
 class TestingConfig(Config):
