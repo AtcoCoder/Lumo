@@ -3,6 +3,7 @@ from flask import Flask
 from config import DevelopmentConfig
 from models.base_model import Base
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 
 
 def create_app(config_object=DevelopmentConfig):
@@ -13,11 +14,13 @@ def create_app(config_object=DevelopmentConfig):
     app.register_blueprint(app_views)
 
 
+
     return app
 
 
 app = create_app()
 migrate = Migrate(app, Base)
+jwt = JWTManager(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True, debug=True)
