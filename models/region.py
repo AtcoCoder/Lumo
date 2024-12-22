@@ -7,7 +7,7 @@ from sqlalchemy.orm import mapped_column, relationship
 class Region(BaseModel):
     """Region Class Model"""
     __tablename__ = 'regions'
-    name = mapped_column(String(16), nullable=False)
+    name = mapped_column(String(16), nullable=False, unique=True)
     areas = relationship('Area', backref='region')
 
     def __init__(self, **kwargs) -> None:

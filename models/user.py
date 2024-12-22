@@ -60,13 +60,13 @@ class User(BaseModel):
     def get_by_email(self, email):
         """Gets user by email"""
         import models
-        return models.db.get_by(self, 'email', email)
+        return models.db.get_by(self, email, 'email')
     
     @classmethod
     def get_by_username(self, username):
         """Gets user by username"""
         import models
-        return models.db.get_by('username', username)
+        return models.db.get_by(self, username, 'username')
 
     
     # # @property

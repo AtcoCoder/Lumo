@@ -8,7 +8,7 @@ from sqlalchemy import ForeignKey, String
 class Area(BaseModel):
     """Area Class Model"""
     __tablename__ = 'areas'
-    name = mapped_column(String(16), nullable=False)
+    name = mapped_column(String(16), nullable=False, unique=True)
     cities = relationship('City', backref='area')
     region_id = mapped_column(ForeignKey('regions.id'))
 

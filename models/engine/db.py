@@ -30,7 +30,6 @@ class_list = [User, Property, City, Area, Region, Amenity, Image, BlockedToken]
 
 class DB():
     """Database class"""
-    __session = None
     __engine = None
     def __init__(self, db_url) -> None:
         """Instance Initializer"""
@@ -101,9 +100,11 @@ class DB():
         results = self.all(cls)
         return len(results)
     
-    def get_by(self, cls, column, value):
+    def get_by(self, cls, value, column=None):
         """Gets user by email or username"""
-        if column == 'email':
+        if not column:
+            result = self.__session.query(cls).filter_by(name=value).first()
+        elif column == 'email':
             result = self.__session.query(User).filter_by(email=value).first()
         elif column == 'username':
             result = self.__session.query(User).filter_by(username=value).first()
