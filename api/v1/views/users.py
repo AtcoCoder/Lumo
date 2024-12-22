@@ -2,12 +2,13 @@
 from api.v1.views import app_views
 from flask import jsonify, request
 from models.user import User
+from models.blocked_token import BlockedToken
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt
 from werkzeug.security import (
     generate_password_hash,
-    check_password_hash
 )
 
 @app_views.route('/users', strict_slashes=False)
@@ -84,9 +85,16 @@ def user_login():
         return jsonify(message='Incorrect password')
 
 @app_views.route('/users/logout')
+@jwt_required()
 def logout():
     """Logout route"""
-    pass
+    jti = get_jwt()['jti']
+    blocked_token = BlockedToken(
+        jti=jti
+    )
+    blocked_token.save()
+    return jsonify(message='Successfully logged out!!')
+    
 
 
 @app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
@@ -114,3 +122,8 @@ def delete_user(user_id):
         return jsonify(message='User not found'), 400
     user.delete()
     return jsonify(message='User deleted successfully')
+
+@app_views.route('/protected')
+@jwt_required()
+def protected():
+    return jsonify(hello='world')

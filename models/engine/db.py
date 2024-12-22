@@ -11,6 +11,7 @@ from models.area import Area
 from models.region import Region
 from models.amenity import Amenity
 from models.image import Image
+from models.blocked_token import BlockedToken
 from config import CURRENT_CONFIG
 classes = {
     'User': User,
@@ -22,7 +23,7 @@ classes = {
     'Image': Image
 }
 
-class_list = [User, Property, City, Area, Region, Amenity, Image]
+class_list = [User, Property, City, Area, Region, Amenity, Image, BlockedToken]
 
 # URL = DevelopmentConfig.DATABASE_URI
 
@@ -100,12 +101,14 @@ class DB():
         results = self.all(cls)
         return len(results)
     
-    def get_by(self, column, value):
+    def get_by(self, cls, column, value):
         """Gets user by email or username"""
         if column == 'email':
             result = self.__session.query(User).filter_by(email=value).first()
-        else:
+        elif column == 'username':
             result = self.__session.query(User).filter_by(username=value).first()
+        else:
+            result = self.__session.query(BlockedToken).filter_by(jti=value).first()
         return result
     
     def delete(self, obj):
