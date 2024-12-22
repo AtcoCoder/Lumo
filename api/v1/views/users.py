@@ -98,6 +98,7 @@ def logout():
 
 
 @app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
+@jwt_required()
 def update_user(user_id):
     """Update user route"""
     user = User.get(user_id)
@@ -115,6 +116,7 @@ def update_user(user_id):
     return jsonify(message='User successfully updated')
 
 @app_views.route('/users/<user_id>/delete', methods=['DELETE'], strict_slashes=False)
+@jwt_required()
 def delete_user(user_id):
     """Delete user route"""
     user = User.get(user_id)

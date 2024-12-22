@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+# commit with second argument as commit message
+git add .
+git commit -m "$1" 
+
