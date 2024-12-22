@@ -19,7 +19,7 @@ property_amenity = Table(
 class Amenity(BaseModel):
     """Amenity class"""
     __tablename__ = 'amenities'
-    name = mapped_column(String(16), nullable=False, unique=True)
+    name = mapped_column(String(32), nullable=False, unique=True)
     amount = mapped_column(Integer, nullable=False)
     properties =relationship(
         'Property', secondary=property_amenity, back_populates='amenities'
