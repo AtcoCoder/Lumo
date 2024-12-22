@@ -3,6 +3,7 @@ from api.v1.views import app_views
 from flask import jsonify, request
 from models.user import User
 from models.blocked_token import BlockedToken
+from models.property import Property
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -129,3 +130,27 @@ def delete_user(user_id):
 @jwt_required()
 def protected():
     return jsonify(hello='world')
+
+
+@app_views.route('/users/<user_id>/add_property', methods=['POST'], strict_slashes=False)
+def add_property(user_id):
+    """Add property"""
+    user = User.get(id)
+    if not user:
+        return jsonify(message="Can't add property"), 400
+    city_id = ''
+    title = ''
+    price = 0
+    location = ''
+    description = ''
+    property_type = 'rent'
+    is_active = True
+    city = ''
+    amenities = []
+    images = []
+    property = Property(
+        user_id=user_id,
+        city_id =city
+
+    )
+    

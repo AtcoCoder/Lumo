@@ -1,7 +1,7 @@
 """app module"""
 from flask import Flask
 from config import DevelopmentConfig
-from models.base_model import Base
+from models import db
 from models.blocked_token import BlockedToken
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
@@ -18,7 +18,7 @@ def create_app(config_object=DevelopmentConfig):
 
 
 app = create_app()
-migrate = Migrate(app, Base)
+migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
 
