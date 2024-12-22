@@ -6,15 +6,17 @@ from sqlalchemy.orm import relationship
 import datetime
 import models
 from sqlalchemy import String, DateTime
+from sqlalchemy import MetaData
 import uuid
 
 DATETIME = '%Y-%m-%dT%H:%M:%S'
 UTC = datetime.timezone.utc
+metadata = MetaData()
 
 
 class Base(DeclarativeBase):
     """declarative base class"""
-    pass
+    metadata = metadata
 
 
 class BaseModel(Base):
@@ -110,5 +112,8 @@ class BaseModel(Base):
                 to_update[attr] = value
         return to_update
         
-
-    
+    @classmethod
+    def get_by_name(cls, name):
+        """Finds place by name"""
+        result = models.db.get_by(cls, name)
+        return result

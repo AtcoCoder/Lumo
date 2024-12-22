@@ -8,7 +8,11 @@ from flask_jwt_extended import jwt_required
 def add_region():
     """Add region route"""
     name = request.form.get('name')
+    region = Region.get_by_name(name)
+    if region:
+        return jsonify(message='Region already exist')
     region = Region(
         name=name
     )
+    region.save()
     return jsonify(message='Region successfully added')
