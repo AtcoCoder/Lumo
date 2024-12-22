@@ -25,6 +25,7 @@ class TestingConfig(Config):
     """Testing Configurations"""
     DATABASE_URI = 'sqlite:///:memory:'
     TESTING = True
+    JWT_SECRET_KEY = 'secret_key'
 
 
 CURRENT_CONFIG = DevelopmentConfig

@@ -43,7 +43,7 @@ class User(BaseModel):
         for attr in STRINGs:
             if attr in kwargs:
                 value = kwargs[attr]
-                if attr == 'whatsapp' and attr is None:
+                if attr == 'whatsapp' and kwargs[attr] is None:
                     value = 'null'
                 self.validate_value(attr, str, value)
         super().__init__(**kwargs)

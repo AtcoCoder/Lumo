@@ -98,3 +98,17 @@ class BaseModel(Base):
         objs = [obj.to_dict() for obj in result]
         return objs
     
+    def get_infos_to_update(self, request, can_updates):
+        """Returns dict of attrs to be updated
+        with the values to update with"""
+        to_update = {}
+        attrs = {}
+        for can_update in can_updates:
+            attrs[can_update] = request.form.get(can_update)
+        for attr, value in attrs.items():
+            if value:
+                to_update[attr] = value
+        return to_update
+        
+
+    

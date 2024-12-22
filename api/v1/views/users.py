@@ -26,7 +26,6 @@ def register_user():
         password = request.form.get('password')
         phone_number = request.form.get('phone_number')
         whatsapp = request.form.get('whatsapp')
-        print(request.form)
     user = User.get_by_email(email)
     if user:
         return jsonify({'message': 'User already exist'}), 400
@@ -85,3 +84,33 @@ def user_login():
         return jsonify(message='Incorrect password')
 
 @app_views.route('/users/logout')
+def logout():
+    """Logout route"""
+    pass
+
+
+@app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
+def update_user(user_id):
+    """Update user route"""
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User not found'), 400
+    can_updates = [
+        'email',
+        'username',
+        'password',
+        'phone_number',
+        'whatsapp'
+    ]
+    to_updates = user.get_infos_to_update(request, can_updates)
+    user.update(**to_updates)
+    return jsonify(message='User successfully updated')
+
+@app_views.route('/users/<user_id>/delete', methods=['DELETE'], strict_slashes=False)
+def delete_user(user_id):
+    """Delete user route"""
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User not found'), 400
+    user.delete()
+    return jsonify(message='User deleted successfully')
