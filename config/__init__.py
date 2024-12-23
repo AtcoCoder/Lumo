@@ -17,7 +17,7 @@ class DevelopmentConfig(Config):
     """Development configurations"""
     DATABASE_URI = 'mysql+mysqlconnector://atcocoder0:password@localhost/Lumo'
     SQLALCHEMY_DATABASE_URI = DATABASE_URI
-    # SQLALCHEMY_TRACK_MODIFICATIONS  = False
+    SQLALCHEMY_TRACK_MODIFICATIONS  = False
     DEBUG = True
     SECRET_KEY = 'dev'
     JWT_SECRET_KEY = 'secret_key'

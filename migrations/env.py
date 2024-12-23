@@ -2,6 +2,7 @@
 from logging.config import fileConfig
 from flask import current_app
 from alembic import context
+from models.base_model import Base
 
 # Alembic Config object
 config = context.config
@@ -11,7 +12,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Fetch the metadata from the Flask app's SQLAlchemy instance
-target_metadata = current_app.extensions['migrate'].db.metadata
+target_metadata = Base.metadata
 
 # print(current_app.extensions['migrate'].db.__)
 

@@ -39,6 +39,11 @@ class DB():
     def session(self):
         """Returns database session"""
         return self.__session
+    
+    @property
+    def engine(self):
+        """Returns database engine"""
+        return self.__engine
 
     def reload(self):
         """reloads the database and creates scoped session"""
