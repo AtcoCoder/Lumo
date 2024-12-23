@@ -30,6 +30,8 @@ def get_region(region_id):
     region = region.get(region_id)
     if not region:
         return jsonify(message="Region Not Found"), 400
+    return jsonify(region=region)
+
 
 @app_views.route(
     '/regions/<region_id>',
