@@ -61,7 +61,6 @@ def get_region_areas(region_id):
     region = Region.get(region_id)
     if not region:
         return jsonify(region='Region Not Found'), 400
-    areas = region.areas
-    print(areas)
+    areas = region.make_to_jsons(region.areas)
     return jsonify(areas=areas)
 

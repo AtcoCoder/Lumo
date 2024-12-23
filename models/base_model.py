@@ -117,3 +117,11 @@ class BaseModel(Base):
         """Finds place by name"""
         result = models.db.get_by(cls, name)
         return result
+    
+    def make_to_jsons(self, obj_list):
+        """Turns objects of list into json
+        serializable"""
+        json_list = []
+        for obj in obj_list:
+            json_list.append(obj.to_dict())
+        return json_list
