@@ -50,3 +50,18 @@ def w_regions(region_id):
     to_updates = region.get_infos_to_update(request, to_update)
     region.update(**to_updates)
     return jsonify(message='Succesfully updated')
+
+
+@app_views.route(
+    'regions/<region_id>/areas',
+    strict_slashes=False
+)
+def get_region_areas(region_id):
+    """Get region areas route"""
+    region = Region.get(region_id)
+    if not region:
+        return jsonify(region='Region Not Found'), 400
+    areas = region.areas
+    print(areas)
+    return jsonify(areas=areas)
+
