@@ -24,13 +24,13 @@ def get_regions():
     return jsonify(regions=regions)
 
 
-@app_views.route('/regions/regions_id', strict_slashes=False)
+@app_views.route('/regions/<region_id>', strict_slashes=False)
 def get_region(region_id):
     """Get region route"""
-    region = region.get(region_id)
+    region = Region.get(region_id)
     if not region:
         return jsonify(message="Region Not Found"), 400
-    return jsonify(region=region)
+    return jsonify(region=region.to_dict())
 
 
 @app_views.route(
