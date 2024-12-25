@@ -1,5 +1,6 @@
 """Region views module"""
 from models.region import Region
+from models.area import Area
 from api.v1.views import app_views
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
@@ -30,7 +31,8 @@ def get_region(region_id):
     region = Region.get(region_id)
     if not region:
         return jsonify(message="Region Not Found"), 400
-    return jsonify(region=region.to_dict())
+    region_dict = region.to_dict_with('areas', region.areas)
+    return jsonify(region=region_dict)
 
 
 @app_views.route(
@@ -53,14 +55,30 @@ def w_regions(region_id):
 
 
 @app_views.route(
-    'regions/<region_id>/areas',
+    '/regions/<region_id>/add_area',
+    methods=['POST'],
+    strict_slashes=False
+)
+def add_area_to_region(region_id):
+    """Add area to a region"""
+    region = Region.get(region_id)
+    if not region:
+        return jsonify(message='Region Not Found'), 400
+    name = request.form.get('name')
+    area = Area(
+        name=name,
+        region_id=region_id
+    )
+    return jsonify(message='Successfully added')
+
+@app_views.route(
+    '/regions/<region_id>/areas',
     strict_slashes=False
 )
 def get_region_areas(region_id):
     """Get region areas route"""
     region = Region.get(region_id)
     if not region:
-        return jsonify(region='Region Not Found'), 400
-    areas = region.make_to_jsons(region.areas)
+        return jsonify(message='Region Not Found'), 400
+    areas = region.its('areas', 'cities')
     return jsonify(areas=areas)
-

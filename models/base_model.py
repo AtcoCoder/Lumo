@@ -118,10 +118,24 @@ class BaseModel(Base):
         result = models.db.get_by(cls, name)
         return result
     
-    def make_to_jsons(self, obj_list):
+    def to_dict_with(self,relationship ,obj_list):
         """Turns objects of list into json
         serializable"""
-        json_list = []
+        obj_dict = self.to_dict()
+        obj_dict_list = []
         for obj in obj_list:
-            json_list.append(obj.to_dict())
-        return json_list
+            obj_dict_list.append(obj.to_dict())
+        obj_dict[relationship] = obj_dict_list
+        return obj_dict
+
+    def its(self, children, g_children=None):
+        """returns serialized children list"""
+        children_list = getattr(self, children)
+        s_list = []
+        g_children_list = None
+        for child in children_list:
+            if g_children:
+                g_children_list = getattr(child, g_children)
+            s_list.append(child.to_dict_with(g_children, g_children_list))
+        return s_list
+

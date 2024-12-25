@@ -13,3 +13,7 @@ class Region(BaseModel):
     def __init__(self, **kwargs) -> None:
         """Initialises region instance"""
         super().__init__(**kwargs)
+    
+    def get_dict(self):
+        """"""
+        pass

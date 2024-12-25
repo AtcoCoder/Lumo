@@ -1,5 +1,6 @@
 """Area views module"""
 from models.area import Area
+from models.city import City
 from flask import request, jsonify
 from api.v1.views import app_views
 from models.region import Region
@@ -40,7 +41,7 @@ def get_area(area_id):
     area = Area.get(area_id)
     if not area:
         return jsonify(message="Area Not Found"), 400
-    return jsonify(area=area.to_dict())
+    return jsonify(area=area.to_dict_with('cities', area.cities))
 
 
 @app_views.route(
@@ -61,3 +62,36 @@ def w_areas(area_id):
     area.update(**to_updates)
     return jsonify(message='Succesfully updated')
 
+
+
+@app_views.route(
+    '/areas/<area_id>/cities',
+    strict_slashes=False
+)
+def get_area_cities(area_id):
+    """Get area cities route"""
+    area = Area.get(area_id)
+    if not area:
+        return jsonify(message='Area Not Found'), 400
+    cities = area.its('cities', 'properties')
+    return jsonify(cities=cities)
+
+@app_views.route(
+    'areas/<area_id>/add_city',
+    methods=['POST'],
+    strict_slashes=False
+)
+def add_area_city(area_id):
+    """Add city route"""
+    area = Area.get(area_id)
+    if not area:
+        return jsonify(message='Area Not Found'), 400
+    name = request.form.get('name')
+    if not name:
+        return jsonify(message='Missing name.')
+    city = City(
+        name=name,
+        area_id=area_id
+    )
+    city.save()
+    return jsonify(message='City successfully created')
