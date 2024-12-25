@@ -18,6 +18,11 @@ def add_area():
     region = Region.get_by_name(region_name)
     if not region:
         return jsonify(message='Region Not Found'), 400
+    if not name:
+        return jsonify(message='Missing name')
+    area = Area.get_by_name(name)
+    if area:
+        return jsonify(message='Area already exist'), 400
     area = Area(
         name=name,
         region_id=region.id

@@ -65,6 +65,11 @@ def add_area_to_region(region_id):
     if not region:
         return jsonify(message='Region Not Found'), 400
     name = request.form.get('name')
+    if not name:
+        return jsonify(message='Missing name.'), 400
+    area = Area.get_by_name(name)
+    if area:
+        return jsonify(message='Area already exist'), 400
     area = Area(
         name=name,
         region_id=region_id

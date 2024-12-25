@@ -10,3 +10,4 @@ from api.v1.views.areas import *
 from api.v1.views.cities import *
 from api.v1.views.images import *
 from api.v1.views.properties import *
+from api.v1.views.amenities import *

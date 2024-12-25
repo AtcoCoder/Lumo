@@ -96,10 +96,24 @@ class BaseModel(Base):
     
     @classmethod
     def get_all(cls):
+        relationship_dict = {
+            'Region': ['areas'],
+            'Area': ['cities'],
+            'City': ['properties'],
+            'User': ['properties'],
+            'Property': ['images', 'amenities'],
+            'Amenity': ['properties']
+        }
         result = models.db.all(cls)
-        objs = [obj.to_dict() for obj in result]
+        objs = []
+        for obj in result:
+            relationships = relationship_dict[obj.__class__.__name__]
+            for relationship in relationships:
+                obj_dict = obj.to_dict_with(relationship, getattr(obj, relationship))
+                objs.append(obj_dict)
         return objs
     
+
     def get_infos_to_update(self, request, can_updates):
         """Returns dict of attrs to be updated
         with the values to update with"""
