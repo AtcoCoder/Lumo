@@ -108,19 +108,20 @@ class BaseModel(Base):
         objs = []
         for obj in result:
             relationships = relationship_dict[obj.__class__.__name__]
+            obj_dict = obj.to_dict()
             for relationship in relationships:
-                obj_dict = obj.to_dict_with(relationship, getattr(obj, relationship))
-                objs.append(obj_dict)
+                obj_dict[relationship] = obj.its(relationship)
+            objs.append(obj_dict)
         return objs
     
 
-    def get_infos_to_update(self, request, can_updates):
+    def get_infos_to_update(self, data, can_updates):
         """Returns dict of attrs to be updated
         with the values to update with"""
         to_update = {}
         attrs = {}
         for can_update in can_updates:
-            attrs[can_update] = request.form.get(can_update)
+            attrs[can_update] = data.get(can_update)
         for attr, value in attrs.items():
             if value:
                 to_update[attr] = value
@@ -146,10 +147,11 @@ class BaseModel(Base):
         """returns serialized children list"""
         children_list = getattr(self, children)
         s_list = []
-        g_children_list = None
+        g_children_list = []
         for child in children_list:
             if g_children:
                 g_children_list = getattr(child, g_children)
-            s_list.append(child.to_dict_with(g_children, g_children_list))
+                s_list.append(child.to_dict_with(g_children, g_children_list))
+            s_list.append(child.to_dict())
         return s_list
 

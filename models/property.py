@@ -11,8 +11,7 @@ NOT_NULLABLES = [
     'title',
     'user_id',
     'price',
-    'location',
-    'size'
+    'location'
 ]
 
 

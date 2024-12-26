@@ -13,3 +13,11 @@ class City(BaseModel):
     def __init__(self, **kwargs) -> None:
         """Initialises city instance"""
         super().__init__(**kwargs)
+    
+    def return_location(self):
+        """Return full location of city"""
+        city_name = self.name
+        area_name = self.area.name
+        region_name = self.area.region.name
+        location = [city_name, area_name, region_name]
+        return ', '.join(location)

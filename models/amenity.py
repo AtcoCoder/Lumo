@@ -26,4 +26,5 @@ class Amenity(BaseModel):
     )
 
     def __init__(self, **kwargs) -> None:
+        self.amount = 1
         super().__init__(**kwargs)

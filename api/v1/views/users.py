@@ -2,6 +2,9 @@
 from api.v1.views import app_views
 from flask import jsonify, request
 from models.user import User
+from models.city import City
+from models.amenity import Amenity
+from models.image import Image
 from models.blocked_token import BlockedToken
 from models.property import Property
 from flask_jwt_extended import create_access_token
@@ -62,7 +65,7 @@ def get_user(user_id):
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not Found'), 400
-    return jsonify(user=user.to_dict)
+    return jsonify(user=user.to_dict_with('properties', user.properties))
 
 @app_views.route(
     '/users/login',
@@ -135,22 +138,80 @@ def protected():
 @app_views.route('/users/<user_id>/add_property', methods=['POST'], strict_slashes=False)
 def add_property(user_id):
     """Add property"""
-    user = User.get(id)
+    user = User.get(user_id)
     if not user:
         return jsonify(message="Can't add property"), 400
-    city_id = ''
-    title = ''
-    price = 0
-    location = ''
-    description = ''
-    property_type = 'rent'
-    is_active = True
-    city = ''
-    amenities = []
-    images = []
-    property = Property(
-        user_id=user_id,
-        city_id =city
+    data = request.get_json()
+    title = data.get('title')
+    price = data.get('price')
+    description = data.get('description')
+    property_type = data.get('property_type')
+    city_id = data.get('city_id')
+    amenity_ids = data.get('amenities', [])
+    image_list = data.get('images')
+    amenities = [Amenity.get(amenity_id) for amenity_id in amenity_ids]
+    if None in [
+        title,
+        price,
+        description,
+        property_type,
+        city_id,
+    ]:
+        return jsonify(message='Missing field.'), 400
 
+    city = City.get(city_id)
+    location = city.return_location()
+    city_id = city.id
+    property = Property(
+        title=title,
+        price=price,
+        location=location,
+        description=description,
+        property_type=property_type,
+        is_active=True,
+        amenities=amenities,
+        user_id=user_id,
+        city_id =city_id
     )
+    images = [Image(image_url=image_url) for image_url in image_list]
+    property.images = images
+    property.save()
+    return jsonify(message='Property succesfully added.')
+
+
+@app_views.route(
+    '/users/<user_id>/properties/<property_id>',
+    strict_slashes=False,
+)
+def get_property(property_id, user_id):
+    """Update/delete property"""
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User not found'), 400
+    property = Property.get(property_id)
+    if not property:
+        return jsonify(message='Property not found'), 400
     
+    property_dict = property.to_dict()
+    property_dict['images'] = property.its('images')
+    property_dict['amenities'] = property.its('amenities')
+    return jsonify(property=property_dict)
+    
+
+@app_views.route(
+    '/users/<user_id>/properties/<property_id>',
+    strict_slashes=False,
+    methods=['PATCH', 'DELETE']
+)
+def w_property(property_id, user_id):
+    """Update/delete property"""
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User not found'), 400
+    property = Property.get(property_id)
+    if not property:
+        return jsonify(message='Property not found'), 400
+    
+    if request.method == 'PATCH':
+        data = request.get_json()
+    pass
