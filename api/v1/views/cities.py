@@ -63,3 +63,21 @@ def w_city(city_id):
         return jsonify(message='City Name successfully changed')
     city.delete()
     return jsonify(message='Successfully deleted')
+
+
+@app_views.route(
+    '/cities/<city_id>/properties',
+    strict_slashes=False
+)
+def get_city_properties(city_id):
+    """Get city properties route"""
+    city = City.get(city_id)
+    if not city:
+        return jsonify(message='City Not Found.'), 400
+    properties = city.properties
+    property_list = []
+    for property in properties:
+        property_dict = property.to_dict_with('amenities', property.amenities)
+        property_dict['images'] = property.its('images')
+        property_list.append(property_dict)
+    return jsonify(properties=property_list)

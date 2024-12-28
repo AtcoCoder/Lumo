@@ -224,6 +224,8 @@ def w_property(property_id, user_id):
         updates = property.get_infos_to_update(data, can_updates)
         property.update(**updates)
         return jsonify(message='Succesfully updated.')
+    property.delete()
+    return jsonify(message='Property deleted')
 
 
 @app_views.route(
