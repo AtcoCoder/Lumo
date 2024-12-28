@@ -22,15 +22,15 @@ def get_users():
     return jsonify(users=users)
 
 
-@app_views.route('/auth/signup', methods=['GET', 'POST'], strict_slashes=False)
+@app_views.route('/auth/signup', methods=['POST'], strict_slashes=False)
 def register_user():
     """Register user account"""
-    if request.method == 'POST':
-        email = request.form.get('email')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        phone_number = request.form.get('phone_number')
-        whatsapp = request.form.get('whatsapp')
+    data = request.get_json()
+    email = data.get('email')
+    username = data.get('username')
+    password = data.get('password')
+    phone_number = data.get('phone_number')
+    whatsapp = data.get('whatsapp')
     user = User.get_by_email(email)
     if user:
         return jsonify({'message': 'User already exist'}), 400
