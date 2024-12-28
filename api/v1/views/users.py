@@ -22,7 +22,7 @@ def get_users():
     return jsonify(users=users)
 
 
-@app_views.route('/register', methods=['GET', 'POST'], strict_slashes=False)
+@app_views.route('/auth/signup', methods=['GET', 'POST'], strict_slashes=False)
 def register_user():
     """Register user account"""
     if request.method == 'POST':
