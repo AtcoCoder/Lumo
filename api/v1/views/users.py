@@ -214,4 +214,13 @@ def w_property(property_id, user_id):
     
     if request.method == 'PATCH':
         data = request.get_json()
-    pass
+        can_updates = [
+            'price',
+            'title',
+            'description',
+            'property_type',
+            'is_active'
+        ]
+        updates = property.get_infos_to_update(data, can_updates)
+        property.update(**updates)
+        return jsonify(message='Succesfully updated.')
