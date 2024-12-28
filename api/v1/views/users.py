@@ -224,3 +224,21 @@ def w_property(property_id, user_id):
         updates = property.get_infos_to_update(data, can_updates)
         property.update(**updates)
         return jsonify(message='Succesfully updated.')
+
+
+@app_views.route(
+    '/users/<user_id>/properties',
+    strict_slashes=False
+)
+def get_user_properties(user_id):
+    """Get user properties route"""
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User Not Found.'), 400
+    properties = user.properties
+    property_list = []
+    for property in properties:
+        property_dict = property.to_dict_with('amenities', property.amenities)
+        property_dict['images'] = property.its('images')
+        property_list.append(property_dict)
+    return jsonify(properties=property_list)
