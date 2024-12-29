@@ -55,7 +55,8 @@ def w_city(city_id):
     if not city:
         return jsonify(message='City Not Found')
     if request.method == 'PATCH':
-        name = request.form.get('name')
+        data = request.form
+        name = data.get('name')
         if not name:
             return jsonify(message='Missing name')
         city.name = name
