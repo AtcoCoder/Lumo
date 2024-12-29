@@ -8,6 +8,7 @@ from models.image import Image
 from models.blocked_token import BlockedToken
 from models.property import Property
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt
@@ -59,6 +60,7 @@ def register_user():
     user.save()
     return jsonify(message='User successfully created.'), 201
 
+
 @app_views.route('/users/<user_id>', strict_slashes=False)
 def get_user(user_id):
     """Get user by id (user_id)"""
@@ -68,7 +70,7 @@ def get_user(user_id):
     return jsonify(user=user.to_dict_with('properties', user.properties))
 
 @app_views.route(
-    '/users/login',
+    '/auth/login',
     strict_slashes=False,
     methods=['GET', 'POST']
 )
@@ -84,13 +86,18 @@ def user_login():
         if not user:
             return jsonify(message='User does not exist'), 400
         if user.is_valid(password):
-            access_token = create_access_token(identity=user.username)
-            return jsonify(access_token=access_token)
+            access_token = create_access_token(identity=user.username, fresh=True)
+            refresh_token = create_refresh_token(identity=user.username)
+            return jsonify(access_token=access_token, refresh_token=refresh_token)
         return jsonify(message='Incorrect password')
 
-@app_views.route('/users/logout')
+@app_views.route(
+    '/auth/logout',
+    strict_slashes=False,
+    methods=['POST']
+)
 @jwt_required()
-def logout():
+def user_logout():
     """Logout route"""
     jti = get_jwt()['jti']
     blocked_token = BlockedToken(
@@ -99,6 +106,53 @@ def logout():
     blocked_token.save()
     return jsonify(message='Successfully logged out!!')
     
+
+@app_views.route(
+    'auth/refresh',
+    strict_slashes=False,
+    methods=['POST']
+)
+@jwt_required(refresh=True)
+def refresh():
+    """Refresh authentication token"""
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity, fresh=False)
+    return jsonify(access_token=access_token)
+
+
+@app_views.route(
+        'users/me',
+        strict_slashes=False,
+        methods=['PATCH', 'DELETE']
+)
+@jwt_required()
+def get_me():
+    """Get current user"""
+    username = get_jwt_identity()
+    user = User.get_by_username(username)
+    if not user:
+        return jsonify(message='Not found'), 400
+
+    if request.method == 'PATCH':
+        can_updates = [
+            'email',
+            'username',
+            'password',
+            'phone_number',
+            'whatsapp'
+        ]
+        to_updates = user.get_infos_to_update(request, can_updates)
+        user.update(**to_updates)
+        return jsonify(message='User successfully updated')
+
+    if request.method == 'DELETE':
+        user.delete()
+        return jsonify(message='User deleted successfully')
+
+    user_dict = user.to_dict_with('properties', user.properties)
+    return jsonify(me=user_dict)
+
+
 
 
 @app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
@@ -135,10 +189,11 @@ def protected():
     return jsonify(hello='world')
 
 
-@app_views.route('/users/<user_id>/add_property', methods=['POST'], strict_slashes=False)
+@app_views.route('/properties', methods=['POST'], strict_slashes=False)
 def add_property(user_id):
     """Add property"""
-    user = User.get(user_id)
+    identity = get_jwt_identity()
+    user = User.get_by_username(identity)
     if not user:
         return jsonify(message="Can't add property"), 400
     data = request.get_json()
