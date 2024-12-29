@@ -49,7 +49,8 @@ def w_regions(region_id):
         region.delete()
         return jsonify(message='Successfully deleted')
     to_update = ['name']
-    to_updates = region.get_infos_to_update(request, to_update)
+    data = request.form
+    to_updates = region.get_infos_to_update(data, to_update)
     region.update(**to_updates)
     return jsonify(message='Succesfully updated')
 

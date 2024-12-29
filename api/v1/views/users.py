@@ -190,7 +190,7 @@ def protected():
 
 
 @app_views.route('/properties', methods=['POST'], strict_slashes=False)
-def add_property(user_id):
+def add_property():
     """Add property"""
     identity = get_jwt_identity()
     user = User.get_by_username(identity)
@@ -225,7 +225,7 @@ def add_property(user_id):
         property_type=property_type,
         is_active=True,
         amenities=amenities,
-        user_id=user_id,
+        user_id=user.id,
         city_id =city_id
     )
     images = [Image(image_url=image_url) for image_url in image_list]
@@ -235,32 +235,15 @@ def add_property(user_id):
 
 
 @app_views.route(
-    '/users/<user_id>/properties/<property_id>',
-    strict_slashes=False,
-)
-def get_property(property_id, user_id):
-    """Update/delete property"""
-    user = User.get(user_id)
-    if not user:
-        return jsonify(message='User not found'), 400
-    property = Property.get(property_id)
-    if not property:
-        return jsonify(message='Property not found'), 400
-    
-    property_dict = property.to_dict()
-    property_dict['images'] = property.its('images')
-    property_dict['amenities'] = property.its('amenities')
-    return jsonify(property=property_dict)
-    
-
-@app_views.route(
-    '/users/<user_id>/properties/<property_id>',
+    '/properties/<property_id>',
     strict_slashes=False,
     methods=['PATCH', 'DELETE']
 )
-def w_property(property_id, user_id):
+@jwt_required()
+def w_property(property_id):
     """Update/delete property"""
-    user = User.get(user_id)
+    identity = get_jwt_identity()
+    user = User.get_by_username(identity)
     if not user:
         return jsonify(message='User not found'), 400
     property = Property.get(property_id)
@@ -290,6 +273,26 @@ def w_property(property_id, user_id):
 def get_user_properties(user_id):
     """Get user properties route"""
     user = User.get(user_id)
+    if not user:
+        return jsonify(message='User Not Found.'), 400
+    properties = user.properties
+    property_list = []
+    for property in properties:
+        property_dict = property.to_dict_with('amenities', property.amenities)
+        property_dict['images'] = property.its('images')
+        property_list.append(property_dict)
+    return jsonify(properties=property_list)
+
+
+@app_views.route(
+    '/users/me/properties',
+    strict_slashes=False
+)
+@jwt_required()
+def get_user_properties():
+    """Get user properties route"""
+    username = get_jwt_identity()
+    user = User.get_by_username(username)
     if not user:
         return jsonify(message='User Not Found.'), 400
     properties = user.properties

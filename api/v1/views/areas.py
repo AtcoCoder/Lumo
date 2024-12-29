@@ -91,7 +91,8 @@ def add_area_city(area_id):
     area = Area.get(area_id)
     if not area:
         return jsonify(message='Area Not Found'), 400
-    name = request.form.get('name')
+    data = request.form
+    name = data.get('name')
     if not name:
         return jsonify(message='Missing name.')
     city = City(
