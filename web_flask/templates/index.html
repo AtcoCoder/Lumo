@@ -1,6 +1,7 @@
-{% include "header.html" %}
+{% extends "header.html" %}
 {% block title %}Index{% endblock %}
 {% block head %}
+{{ super() }}
 {% endblock %}
 {% block content %}
     <h1>Index</h1>
@@ -8,3 +9,7 @@
       Welcome to my awesome homepage.
     </p>
 {% endblock %}
+{% block footer %}
+{{ super() }}
+{% endblock %}
+
