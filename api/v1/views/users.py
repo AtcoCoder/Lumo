@@ -127,7 +127,7 @@ def refresh():
 )
 @jwt_required()
 def get_me():
-    """Get current user"""
+    """Get/update/delete current authenticated user"""
     username = get_jwt_identity()
     user = User.get_by_username(username)
     if not user:
@@ -158,7 +158,7 @@ def get_me():
 @app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
 def update_user(user_id):
-    """Update user route"""
+    """Update user (For admin)"""
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not found'), 400
@@ -176,7 +176,7 @@ def update_user(user_id):
 @app_views.route('/users/<user_id>/delete', methods=['DELETE'], strict_slashes=False)
 @jwt_required()
 def delete_user(user_id):
-    """Delete user route"""
+    """Delete user (For admin)"""
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not found'), 400
@@ -190,8 +190,9 @@ def protected():
 
 
 @app_views.route('/properties', methods=['POST'], strict_slashes=False)
+@jwt_required()
 def add_property():
-    """Add property"""
+    """Add a property"""
     identity = get_jwt_identity()
     user = User.get_by_username(identity)
     if not user:
