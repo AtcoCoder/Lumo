@@ -14,7 +14,7 @@ def home():
 )
 def login():
     """login page"""
-    return 'Login'
+    return render_template('login.html')
 
 
 @app.route(
