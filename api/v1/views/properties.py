@@ -6,6 +6,7 @@ from flask import jsonify, request
 
 @app_views.route('/properties', strict_slashes=False)
 def get_properties():
+    """Get all properties"""
     all_properties = Property.get_all()
     # import pprint
     # pprint.pprint(all_properties)
@@ -26,3 +27,8 @@ def get_property_by(property_id):
     property_dict['images'] = property.its('images')
     property_dict['amenities'] = property.its('amenities')
     return jsonify(property=property_dict)
+
+
+@app_views.route('/properties/search', strict_slashes=False)
+def search_property():
+    """Search a property by keyword"""

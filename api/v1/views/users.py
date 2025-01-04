@@ -63,7 +63,7 @@ def register_user():
 
 @app_views.route('/users/<user_id>', strict_slashes=False)
 def get_user(user_id):
-    """Get user by id (user_id)"""
+    """Get user by id (user_id) (For admin)"""
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not Found'), 400
@@ -72,24 +72,25 @@ def get_user(user_id):
 @app_views.route(
     '/auth/login',
     strict_slashes=False,
-    methods=['GET', 'POST']
+    methods=['POST']
 )
 def user_login():
-    """Login route"""
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        if email and password:
-            user = User.get_by_email(email)
-        else:
-            return jsonify(message='Missing field'), 400
-        if not user:
-            return jsonify(message='User does not exist'), 400
-        if user.is_valid(password):
-            access_token = create_access_token(identity=user.username, fresh=True)
-            refresh_token = create_refresh_token(identity=user.username)
-            return jsonify(access_token=access_token, refresh_token=refresh_token)
-        return jsonify(message='Incorrect password')
+    """User Login"""
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    if email and password:
+        user = User.get_by_email(email)
+    else:
+        return jsonify(message='Missing field'), 400
+    if not user:
+        return jsonify(message='User does not exist'), 400
+    if user.is_valid(password):
+        access_token = create_access_token(identity=user.username, fresh=True)
+        refresh_token = create_refresh_token(identity=user.username)
+        return jsonify(access_token=access_token, refresh_token=refresh_token)
+    return jsonify(message='Incorrect password')
+
 
 @app_views.route(
     '/auth/logout',
@@ -272,7 +273,7 @@ def w_property(property_id):
     strict_slashes=False
 )
 def get_user_properties(user_id):
-    """Get user properties route"""
+    """Get a user's properties"""
     user = User.get(user_id)
     if not user:
         return jsonify(message='User Not Found.'), 400
@@ -290,8 +291,8 @@ def get_user_properties(user_id):
     strict_slashes=False
 )
 @jwt_required()
-def get_user_properties():
-    """Get user properties route"""
+def get_current_user_properties():
+    """Get current authenticated user's properties"""
     username = get_jwt_identity()
     user = User.get_by_username(username)
     if not user:

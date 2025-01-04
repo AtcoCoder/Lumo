@@ -14,6 +14,6 @@ class BlockedToken(BaseModel):
     def get_token(cls, jti):
         """Get token from jti"""
         from models import db
-        token = db.get_by(cls, 'jti', jti)
+        token = db.get_by(cls, jti, column='jti')
         return token
 

@@ -1,4 +1,5 @@
 """Init module"""
+from datetime import timedelta
 
 
 class Config(object):
@@ -21,6 +22,8 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SECRET_KEY = 'dev'
     JWT_SECRET_KEY = 'secret_key'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=30)
 
 class TestingConfig(Config):
     """Testing Configurations"""
