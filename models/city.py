@@ -6,7 +6,7 @@ from sqlalchemy import String, ForeignKey
 class City(BaseModel):
     """City class"""
     __tablename__ = 'cities'
-    name = mapped_column(String(60), nullable=False, unique=True)
+    name = mapped_column(String(60), nullable=False)
     area_id = mapped_column(ForeignKey('areas.id'))
     properties = relationship('Property', back_populates='city')
 

@@ -95,13 +95,19 @@ def get_area_cities(area_id):
 @jwt_required()
 def add_area_city(area_id):
     """Add city route"""
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
     area = Area.get(area_id)
     if not area:
         return jsonify(message='Area Not Found'), 400
-    data = request.form
+    data = request.get_json()
     name = data.get('name')
     if not name:
         return jsonify(message='Missing name.')
+    if area.has('cities', name):
+        return jsonify(message='City already exist')
     city = City(
         name=name,
         area_id=area_id
