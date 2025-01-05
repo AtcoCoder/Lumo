@@ -209,7 +209,6 @@ def update_delete_user(user_id):
 @app_views.route('/protected')
 @jwt_required()
 def protected():
-    print(get_jwt_identity())
     return jsonify(hello='world')
 
 

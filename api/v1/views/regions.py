@@ -7,14 +7,14 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt
 from flask_jwt_extended import get_jwt_identity
 
-@app_views.route('/regions/add', methods=['POST'], strict_slashes=False)
+@app_views.route('/regions', methods=['POST'], strict_slashes=False)
 @jwt_required()
 def add_region():
-    """Add region route"""
+    """Add region (For Admin)"""
     claims = get_jwt()
     role = claims.get('role')
-    if not user:
-        return jsonify(message='User Not Found'), 400
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
     data = request.get_json()
     name = data.get('name')
     region = Region.get_by_name(name)
@@ -48,8 +48,13 @@ def get_region(region_id):
     methods=['DELETE', 'PATCH'],
     strict_slashes=False
 )
+@jwt_required()
 def w_regions(region_id):
     """Delete/Update region route"""
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
     region = Region.get(region_id)
     if not region:
         return jsonify(message="Region Not Found"), 400
@@ -57,7 +62,7 @@ def w_regions(region_id):
         region.delete()
         return jsonify(message='Successfully deleted')
     to_update = ['name']
-    data = request.form
+    data = request.get_json()
     to_updates = region.get_infos_to_update(data, to_update)
     region.update(**to_updates)
     return jsonify(message='Succesfully updated')
