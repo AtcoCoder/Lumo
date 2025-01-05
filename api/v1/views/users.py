@@ -176,18 +176,24 @@ def get_me():
 
 
 
-@app_views.route('/users/<user_id>/', methods=['PATCH'], strict_slashes=False)
+@app_views.route(
+    '/users/<user_id>/',
+    methods=['PATCH', 'DELETE'],
+    strict_slashes=False
+)
 @jwt_required()
-def update_user(user_id):
-    """Update user (For admin)"""
+def update_delete_user(user_id):
+    """Update/delete user (For admin)"""
     claims = get_jwt()
     role = claims.get('role')
-    print(role)
     if role != 'Admin':
         return jsonify(msg="Access forbidden"), 403
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not found'), 400
+    if request.method == 'DELETE':
+        user.delete()
+        return jsonify(message='User deleted successfully')
     can_updates = [
         'email',
         'username',
@@ -199,15 +205,6 @@ def update_user(user_id):
     user.update(**to_updates)
     return jsonify(message='User successfully updated')
 
-@app_views.route('/users/<user_id>/delete', methods=['DELETE'], strict_slashes=False)
-@jwt_required()
-def delete_user(user_id):
-    """Delete user (For admin)"""
-    user = User.get(user_id)
-    if not user:
-        return jsonify(message='User not found'), 400
-    user.delete()
-    return jsonify(message='User deleted successfully')
 
 @app_views.route('/protected')
 @jwt_required()
