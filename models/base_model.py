@@ -146,7 +146,6 @@ class BaseModel(Base):
     def its(self, children, g_children=None):
         """returns serialized children list"""
         children_list = getattr(self, children)
-        print(children_list)
         s_list = []
         g_children_list = []
         for child in children_list:

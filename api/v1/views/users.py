@@ -177,7 +177,7 @@ def get_me():
 
 
 @app_views.route(
-    '/users/<user_id>/',
+    '/users/<user_id>',
     methods=['PATCH', 'DELETE'],
     strict_slashes=False
 )
@@ -239,6 +239,8 @@ def add_property():
         return jsonify(message='Missing field.'), 400
 
     city = City.get(city_id)
+    if not city:
+        return jsonify(message='City not Found')
     location = city.return_location()
     city_id = city.id
     property = Property(
@@ -268,7 +270,9 @@ def w_property(property_id):
     """Update/delete property"""
     identity = get_jwt_identity()
     user = User.get_by_username(identity)
-    if not user:
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin' and not user:
         return jsonify(message='User not found'), 400
     property = Property.get(property_id)
     if not property:
