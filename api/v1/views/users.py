@@ -63,7 +63,7 @@ def register_user():
 
 @app_views.route('/users/<user_id>', strict_slashes=False)
 def get_user(user_id):
-    """Get user by id (user_id) (For admin)"""
+    """Get user by id (user_id) (For admin and others)"""
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not Found'), 400
@@ -86,8 +86,18 @@ def user_login():
     if not user:
         return jsonify(message='User does not exist'), 400
     if user.is_valid(password):
-        access_token = create_access_token(identity=user.username, fresh=True)
-        refresh_token = create_refresh_token(identity=user.username)
+        role = 'User'
+        if email == 'admin@email.com':
+            role = 'Admin'
+        access_token = create_access_token(
+            identity=user.username,
+            fresh=True,
+            additional_claims={'role': role}
+        )
+        refresh_token = create_refresh_token(
+            identity=user.username,
+            additional_claims={'role': role}
+        )
         return jsonify(access_token=access_token, refresh_token=refresh_token)
     return jsonify(message='Incorrect password')
 
@@ -124,7 +134,7 @@ def refresh():
 @app_views.route(
         'users/me',
         strict_slashes=False,
-        methods=['PATCH', 'DELETE']
+        methods=['GET', 'PATCH', 'DELETE']
 )
 @jwt_required()
 def get_me():
@@ -142,12 +152,22 @@ def get_me():
             'phone_number',
             'whatsapp'
         ]
-        to_updates = user.get_infos_to_update(request, can_updates)
+        to_updates = user.get_infos_to_update(request.get_json(), can_updates)
         user.update(**to_updates)
+        if username != user.username:
+            access_token = create_access_token(identity=user.username, fresh=True)
+            refresh_token = create_refresh_token(identity=user.username)
+            return jsonify(access_token=access_token, refresh_token=refresh_token)
         return jsonify(message='User successfully updated')
 
     if request.method == 'DELETE':
         user.delete()
+        jti = get_jwt()['jti']
+        print('jti:', jti)
+        blocked_token = BlockedToken(
+            jti=jti
+        )
+        blocked_token.save()
         return jsonify(message='User deleted successfully')
 
     user_dict = user.to_dict_with('properties', user.properties)
@@ -156,10 +176,15 @@ def get_me():
 
 
 
-@app_views.route('/users/<user_id>/update', methods=['PATCH'], strict_slashes=False)
+@app_views.route('/users/<user_id>/', methods=['PATCH'], strict_slashes=False)
 @jwt_required()
 def update_user(user_id):
     """Update user (For admin)"""
+    claims = get_jwt()
+    role = claims.get('role')
+    print(role)
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
     user = User.get(user_id)
     if not user:
         return jsonify(message='User not found'), 400
@@ -170,7 +195,7 @@ def update_user(user_id):
         'phone_number',
         'whatsapp'
     ]
-    to_updates = user.get_infos_to_update(request, can_updates)
+    to_updates = user.get_infos_to_update(request.get_json(), can_updates)
     user.update(**to_updates)
     return jsonify(message='User successfully updated')
 
@@ -187,6 +212,7 @@ def delete_user(user_id):
 @app_views.route('/protected')
 @jwt_required()
 def protected():
+    print(get_jwt_identity())
     return jsonify(hello='world')
 
 

@@ -1,14 +1,22 @@
 """Region views module"""
 from models.region import Region
 from models.area import Area
+from models.user import User
 from api.v1.views import app_views
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import get_jwt_identity
 
 @app_views.route('/regions/add', methods=['POST'], strict_slashes=False)
+@jwt_required()
 def add_region():
     """Add region route"""
-    name = request.form.get('name')
+    claims = get_jwt()
+    role = claims.get('role')
+    if not user:
+        return jsonify(message='User Not Found'), 400
+    data = request.get_json()
+    name = data.get('name')
     region = Region.get_by_name(name)
     if region:
         return jsonify(message='Region already exist')

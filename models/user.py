@@ -4,10 +4,15 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 from models.base_model import BaseModel
+import datetime
 from werkzeug.security import (
     generate_password_hash,
     check_password_hash
 )
+
+
+DATETIME = '%Y-%m-%dT%H:%M:%S'
+UTC = datetime.timezone.utc
 
 NOT_NULLABLES = [
     'password_hash',
@@ -67,6 +72,27 @@ class User(BaseModel):
         """Gets user by username"""
         import models
         return models.db.get_by(self, username, 'username')
+
+    def update(self, **kwargs):
+        """Updates the attrs (keys) with the values
+        provided in the kwargs
+        """
+        import models
+        unchangeables = ['created_at','updated_at','id']
+        for attr, new_value in kwargs.items():
+            if attr not in unchangeables:
+                if attr == 'password':
+                    attr = 'password_hash'
+                    new_value = generate_password_hash(
+                        password=new_value,
+                        method='pbkdf2:sha256',
+                        salt_length=8
+                    )
+                setattr(self, attr, new_value)
+            else:
+                raise TypeError(f'Cannot change {attr}')
+        self.updated_at = datetime.datetime.now(tz=UTC)
+        models.db.save()
 
     
     # # @property
