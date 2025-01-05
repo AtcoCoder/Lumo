@@ -146,13 +146,15 @@ class BaseModel(Base):
     def its(self, children, g_children=None):
         """returns serialized children list"""
         children_list = getattr(self, children)
+        print(children_list)
         s_list = []
         g_children_list = []
         for child in children_list:
             if g_children:
                 g_children_list = getattr(child, g_children)
                 s_list.append(child.to_dict_with(g_children, g_children_list))
-            s_list.append(child.to_dict())
+            else:
+                s_list.append(child.to_dict())
         return s_list
     
     def has(self, attr, name):
