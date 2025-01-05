@@ -109,3 +109,10 @@ def get_region_areas(region_id):
         return jsonify(message='Region Not Found'), 400
     areas = region.its('areas', 'cities')
     return jsonify(areas=areas)
+
+
+@app_views.route('/regions/count', strict_slashes=False)
+def region_count():
+    """Returns the region count"""
+    count = Region.count()
+    return jsonify(region_count=count)

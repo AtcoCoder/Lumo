@@ -164,3 +164,9 @@ class BaseModel(Base):
                 return True
         return False
 
+    @classmethod
+    def count(cls):
+        """Returns the number of rows in the
+        current table"""
+        count = models.db.count(cls)
+        return count
