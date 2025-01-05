@@ -154,4 +154,13 @@ class BaseModel(Base):
                 s_list.append(child.to_dict_with(g_children, g_children_list))
             s_list.append(child.to_dict())
         return s_list
+    
+    def has(self, attr, name):
+        """returns true if object already has
+        an attr with exactly the same name else false"""
+        attrs = getattr(self, attr)
+        for attr in attrs:
+            if attr.name == name:
+                return True
+        return False
 

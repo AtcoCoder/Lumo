@@ -69,25 +69,33 @@ def w_regions(region_id):
 
 
 @app_views.route(
-    '/regions/<region_id>/add_area',
+    '/regions/<region_id>/areas',
     methods=['POST'],
     strict_slashes=False
 )
+@jwt_required()
 def add_area_to_region(region_id):
     """Add area to a region"""
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
     region = Region.get(region_id)
     if not region:
         return jsonify(message='Region Not Found'), 400
-    name = request.form.get('name')
+
+    data = request.get_json()
+    name = data.get('name')
     if not name:
         return jsonify(message='Missing name.'), 400
-    area = Area.get_by_name(name)
-    if area:
+
+    if region.has('areas', name):
         return jsonify(message='Area already exist'), 400
     area = Area(
         name=name,
         region_id=region_id
     )
+    area.save()
     return jsonify(message='Successfully added')
 
 @app_views.route(
