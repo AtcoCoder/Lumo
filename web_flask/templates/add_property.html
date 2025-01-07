@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% set exclude_navbar = true %}
+{% block title %}Add Property - Lumo App{% endblock %}
+
+{% block content %}
+<form class="text-center" method="POST" action="/properties/add">
+    <div class="mb-3">
+        <label for="city" class="form-label">City</label>
+        <select class="form-select" id="city" name="city">
+            {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <textarea class="form-control" placeholder="Description" name="description" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+        <input type="number" class="form-control" placeholder="Price" name="price" required>
+    </div>
+    <div class="mb-3">
+        <label for="type" class="form-label">Property Type</label>
+        <select class="form-select" id="type" name="type">
+            {% for property_type in property_types %}
+            <option value="{{ property_type }}">{{ property_type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <input type="url" class="form-control" placeholder="Image URL" name="image_urls" multiple required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-msub">Add Property</button>
+</form>
+
+{% endblock %}
+<script>
+    // Get references to the dropdowns
+    const regionSelect = document.getElementById('region');
+    const areaSelect = document.getElementById('area');
+
+    // Listen for changes on the region dropdown
+    regionSelect.addEventListener('change', function () {
+        const selectedRegion = this.options[this.selectedIndex];
+        const areas = JSON.parse(selectedRegion.getAttribute('data-areas')); // Parse the data-areas attribute
+        console.log(areas)
+        
+        // Clear existing options in the area dropdown
+        areaSelect.innerHTML = '<option value="" disabled selected>Select an area</option>';
+        
+        // Add new options dynamically
+        areas.forEach(area => {
+            const newOption = document.createElement('option');
+            newOption.value = area.id;
+            newOption.textContent = area.name;
+            areaSelect.appendChild(newOption);
+        });
+    });
+</script>

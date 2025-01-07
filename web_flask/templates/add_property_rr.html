@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% set exclude_navbar = true %}
+{% block title %}Add Property - Lumo App{% endblock %}
+
+{% block content %}
+<form class="text-center" method="POST" action="/properties/add">
+    <div class="mb-3">
+        <label for="region" class="form-label">Region</label>
+        <select class="form-select" id="region" name="region">
+            <option value="" disabled selected>Select a region</option>
+            {% for region in regions %}
+            <option value="{{ region.id }}">{{ region.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary btn-msub">Next</button>
+</form>
+
+{% endblock %}

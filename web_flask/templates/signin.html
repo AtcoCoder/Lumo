@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% set exclude_navbar = true %}
+{% block title %}Login - Lumo App{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Lumo</h1>
+    <form method="POST" action="/login">
+        <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+{% endblock %}

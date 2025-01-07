@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% set exclude_navbar = true %}
+{% block title %}Register - Lumo App{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-4">Lumo</h1>
+    <form method="POST" action="/register">
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Username" name="username" required>
+        </div>
+        <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" name="password" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Phone Number" name="phone" required>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="WhatsApp Number (Optional)" name="whatsapp">
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+</div>
+{% endblock %}
