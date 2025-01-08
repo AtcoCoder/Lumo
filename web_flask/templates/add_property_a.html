@@ -1,9 +1,8 @@
 {% extends "base.html" %}
-{% set exclude_navbar = true %}
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
-<form class="text-center" method="POST" action="/properties/add">
+<form class="text-center" method="POST">
     <div class="mb-3">
         <label for="area" class="form-label">Area</label>
         <select class="form-select" id="area" name="area">

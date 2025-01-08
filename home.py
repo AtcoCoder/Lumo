@@ -1,12 +1,32 @@
 """Home route module"""
 from web_flask.run import app
-from flask import render_template, jsonify
+from flask import render_template, jsonify, flash
 from models.user import User
 from models.area import Area
 from models.city import City
+from models.amenity import Amenity
 from models.property import Property
 from models.region import Region
 from flask import request, url_for, redirect
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
+
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+def admin_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # If id is not 1 then return abort with 403 error
+        if current_user.id != 1:
+            return abort(403)
+        # Otherwise continue with the route function
+        return f(*args, **kwargs)
+
+    return decorated_function
+
 
 properties =  [
     {
@@ -194,6 +214,41 @@ def login():
 )
 def signup():
     """signup page"""
+    if request.method == 'POST':
+        data = request.form
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        phone_number = data.get('phone_number')
+        if None in [username, email, password, phone_number]:
+            return jsonify(message='Missing Field'), 400
+        user = User.get_by_username(user)
+        if user:
+            flash("You've already signed up with that email, log in instead!")
+        user = User.get_by_email(email)
+        if user:
+            return redirect(url_for('login'))
+        hash_password = generate_password_hash(
+            form.password.data,
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
+        user_data = {
+            'username': username,
+            'email': email,
+            'hash_password': hash_password,
+            'phone_number': phone_number
+        }
+        whatsapp = data.get('whatsapp')
+        if whatsapp:
+            user_data['whatsapp'] = whatsapp
+        user = User(**user_data)
+        user.save()
+        login_user(user)
+        return redirect(url_for('home'))
+
+
+
     return render_template('register.html')
 
 @app.route('/properties/<property_id>', strict_slashes=False)
@@ -227,8 +282,7 @@ def add_p_area(region_id):
         area = Area.get(area_id)
         if not area:
             return jsonify(message='Area Not Found'), 400
-        # return redirect(url_for('add_property_c', area_id=area.id))
-        return render_template('add_property.html', cities=area.cities)
+        return redirect(url_for('add_property_c', area_id=area.id))
     region = Region.get(region_id)
     if not region:
         return jsonify(messge='Region Not Found'), 400
@@ -245,10 +299,36 @@ def add_property_c(area_id):
         city = City.get(city_id)
         if not city:
             return jsonify(message='City Not Found'), 400
+        location = city.return_location()
+        title = request.form.get('title')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        property_type = request.form.get('type')
+        image_urls = request.form.getlist('image_urls[]')
+        amenities = request.form.getlist('amenities[]')
+        if not amenities:
+            amenities = []
+        if None in [title, description, price, property_type, image_urls]:
+            return jsonify(message="Missing Field"), 400
+        if len(image_urls) < 5:
+            return jsonify(message="Please enter at least 5 images"), 400
+        new_property = Property(
+            title=title,
+            description=description,
+            location=location,
+            price=int(price),
+            property_type=property_type,
+            images=image_urls,
+            user_id='bf9dae03-2e21-4336-9c45-d7943255e05b',
+            amenities=amenities,
+            city_id=city.id
+        )
+        
+    amenities = Amenity.get_all()
     area = Area.get(area_id)
     if not area:
         return jsonify(messsage='Area Not Found'), 400
-    return render_template('add_property.html', cities=area.cities)
+    return render_template('add_property.html', cities=area.cities, amenities=amenities)
 
 @app.route(
     '/user/<user_id>',

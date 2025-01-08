@@ -1,14 +1,28 @@
 {% extends "base.html" %}
-{% set exclude_navbar = true %}
+<style>
+    #image-urls-container .input-group {
+        display: flex;
+        align-items: center;
+    }
+
+    #image-urls-container .input-group input {
+        flex-grow: 1; /* Ensure input takes up available space */
+    }
+
+    #image-urls-container .input-group button {
+        margin-left: 10px; /* Space between input and button */
+    }
+</style>
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
-<form class="text-center" method="POST" action="/properties/add">
+<form class="text-center" method="POST" action="/properties/add" id="add-property-form">
     <div class="mb-3">
         <label for="city" class="form-label">City</label>
-        <select class="form-select" id="city" name="city">
+        <select class="form-select" id="city" name="city" required>
+            <option value="" disabled selected>Select a city</option>
             {% for city in cities %}
-            <option value="{{ city }}">{{ city }}</option>
+            <option value="{{ city }}">{{ city.name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -23,39 +37,81 @@
     </div>
     <div class="mb-3">
         <label for="type" class="form-label">Property Type</label>
-        <select class="form-select" id="type" name="type">
-            {% for property_type in property_types %}
-            <option value="{{ property_type }}">{{ property_type }}</option>
-            {% endfor %}
+        <select class="form-select" id="type" name="type" required>
+            <option value="" disabled selected>Select a property type</option>
+            <option value="rent">Rent</option>
+            <option value="sale">Sale</option>
         </select>
     </div>
+
     <div class="mb-3">
-        <input type="url" class="form-control" placeholder="Image URL" name="image_urls" multiple required>
+        <label class="form-label">Amenities</label>
+        <div id="amenities-container" class="d-flex flex-wrap justify-content-start">
+            {% for amenity in amenities %}
+            <div class="form-check me-3 mb-2">
+                <input class="form-check-input" type="checkbox" id="amenity-{{ amenity.id }}" name="amenities[]" value="{{ amenity.id }}">
+                <label class="form-check-label" for="amenity-{{ amenity.id }}">
+                    {{ amenity.name }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary btn-msub">Add Property</button>
+    <div class="mb-3" id="image-urls-container">
+        <label class="form-label">Image URLs (Enter at least 5)</label>
+        <input type="url" class="form-control mb-2" placeholder="Image URL 1" name="image_urls[]" required>
+        <input type="url" class="form-control mb-2" placeholder="Image URL 2" name="image_urls[]" required>
+        <input type="url" class="form-control mb-2" placeholder="Image URL 3" name="image_urls[]" required>
+        <input type="url" class="form-control mb-2" placeholder="Image URL 4" name="image_urls[]" required>
+        <input type="url" class="form-control mb-2" placeholder="Image URL 5" name="image_urls[]" required>
+    </div>
+
+    <button type="button" class="btn btn-secondary mb-3" id="add-more-images">Add More Images</button>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary btn-msub mt-3">Add Property</button>
+    </div>
 </form>
 
-{% endblock %}
 <script>
-    // Get references to the dropdowns
-    const regionSelect = document.getElementById('region');
-    const areaSelect = document.getElementById('area');
+    document.getElementById('add-more-images').addEventListener('click', function () {
+        const container = document.getElementById('image-urls-container');
+        const inputCount = container.querySelectorAll('input').length + 1; // Increment count
+        
+        // Create input field
+        const newDiv = document.createElement('div');
+        newDiv.className = 'd-flex align-items-center mb-2';
 
-    // Listen for changes on the region dropdown
-    regionSelect.addEventListener('change', function () {
-        const selectedRegion = this.options[this.selectedIndex];
-        const areas = JSON.parse(selectedRegion.getAttribute('data-areas')); // Parse the data-areas attribute
-        console.log(areas)
-        
-        // Clear existing options in the area dropdown
-        areaSelect.innerHTML = '<option value="" disabled selected>Select an area</option>';
-        
-        // Add new options dynamically
-        areas.forEach(area => {
-            const newOption = document.createElement('option');
-            newOption.value = area.id;
-            newOption.textContent = area.name;
-            areaSelect.appendChild(newOption);
+        const newInput = document.createElement('input');
+        newInput.type = 'url';
+        newInput.className = 'form-control me-2';
+        newInput.placeholder = `Image URL ${inputCount}`;
+        newInput.name = 'image_urls[]';
+
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'btn btn-danger btn-sm';
+        deleteButton.textContent = 'Delete';
+
+        // Append input and button to the div
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(deleteButton);
+
+        // Add event listener for the delete button
+        deleteButton.addEventListener('click', function () {
+            container.removeChild(newDiv);
         });
+
+        container.appendChild(newDiv);
+    });
+
+    document.getElementById('add-property-form').addEventListener('submit', function (event) {
+        const imageInputs = document.querySelectorAll('#image-urls-container input');
+        const filledImages = Array.from(imageInputs).filter(input => input.value.trim() !== '');
+        if (filledImages.length < 5) {
+            event.preventDefault(); // Prevent form submission
+            alert('Please provide at least 5 image URLs.');
+        }
     });
 </script>
+{% endblock %}
