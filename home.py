@@ -20,7 +20,7 @@ def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # If id is not 1 then return abort with 403 error
-        if current_user.id != 1:
+        if current_user.email != 'admin@email.com':
             return abort(403)
         # Otherwise continue with the route function
         return f(*args, **kwargs)
@@ -195,7 +195,7 @@ regions = [
 
 @app.route('/', strict_slashes=False)
 def home():
-    return render_template('home.html', properties=properties)
+    return render_template('home.html', properties=properties, current_user)
 
 @app.route(
     '/login',
@@ -204,7 +204,29 @@ def home():
 )
 def login():
     """login page"""
-    return render_template('signin.html')
+    if request.method == 'POST':
+        data = request.form
+        email = data.get('email')
+        password = data.get('password')
+        user = User.get_by_email(email)
+        if not user:
+            flash("That email does not exist, please try again.")
+            return redirect(url_for('login'))
+        elif not check_password_hash(user.password, password):
+            flash('Password incorrect, please try again.')
+            return redirect(url_for('login'))
+        login_user(user)
+        return redirect(url_for('home'))
+    return render_template('signin.html', current_user=current_user)
+
+@app.route(
+    '/logout',
+    strict_slashes=False
+)
+def logout():
+    """User logout"""
+    logout_user()
+    return redirect(url_for('home'))
 
 
 @app.route(
@@ -249,7 +271,7 @@ def signup():
 
 
 
-    return render_template('register.html')
+    return render_template('register.html', current_user=current_user)
 
 @app.route('/properties/<property_id>', strict_slashes=False)
 def get_property(property_id):
