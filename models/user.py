@@ -9,6 +9,7 @@ from werkzeug.security import (
     generate_password_hash,
     check_password_hash
 )
+from flask_login import UserMixin
 
 
 DATETIME = '%Y-%m-%dT%H:%M:%S'
@@ -38,6 +39,9 @@ class User(BaseModel):
     phone_number = mapped_column(String(16), nullable=False)
     whatsapp = mapped_column(String(16), nullable=True)
     properties = relationship('Property', backref='user')
+    is_authenticated = False
+    is_active = False
+    is_anonymous = True
 
     def __init__(self, **kwargs) -> None:
         """Instance Initializer"""
@@ -52,7 +56,7 @@ class User(BaseModel):
                     value = 'null'
                 self.validate_value(attr, str, value)
         super().__init__(**kwargs)
-    
+
     def is_valid(self, password):
         """Verifies password"""
         return check_password_hash(self.password_hash, password)
@@ -93,6 +97,20 @@ class User(BaseModel):
                 raise TypeError(f'Cannot change {attr}')
         self.updated_at = datetime.datetime.now(tz=UTC)
         models.db.save()
+    
+    def get_id(self):
+        """Returns user id"""
+        return self.id
+    
+    @property
+    def is_authenticated(self):
+        """Indicate that user is authenticated"""
+        return True
+    
+    @property
+    def is_active(self):
+        """Indicate the user is active"""
+        return True
 
     
     # # @property

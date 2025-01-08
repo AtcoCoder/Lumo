@@ -4,6 +4,13 @@
 {% block content %}
 <div class="text-center">
     <h1 class="mb-4"><a class="navbar-brand" href="/">Lumo</a></h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p class="flash">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <form method="POST" action="/register">
         <div class="mb-3">
             <input type="text" class="form-control" placeholder="Username" name="username" required>

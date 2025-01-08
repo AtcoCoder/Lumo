@@ -45,7 +45,12 @@
             margin: auto;
         }
 
-            #image-urls-container .input-group {
+        .flash {
+            color: #ee6f57;
+            text-align: center;
+        }
+
+        #image-urls-container .input-group {
         display: flex;
         align-items: center;
         }
@@ -56,6 +61,11 @@
 
         #image-urls-container .input-group button {
             margin-left: 10px; /* Space between input and button */
+        }
+        .uniform-img {
+            width: 100%;            /* Full width of the card */
+            height: 200px;          /* Fixed height */
+            object-fit: cover;      /* Maintain aspect ratio and crop */
         }
     </style>
 </head>
@@ -76,12 +86,18 @@
                         </form>
                     </li>
                     {% endif %}
+                    {% if not current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/register">Register</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="btn btn-sell" href="/properties/add">Sell/Rent</a>
                     </li>

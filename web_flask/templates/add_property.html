@@ -16,13 +16,13 @@
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
-<form class="text-center" method="POST" action="/properties/add" id="add-property-form">
+<form class="text-center" method="POST" id="add-property-form">
     <div class="mb-3">
         <label for="city" class="form-label">City</label>
         <select class="form-select" id="city" name="city" required>
             <option value="" disabled selected>Select a city</option>
             {% for city in cities %}
-            <option value="{{ city }}">{{ city.name }}</option>
+            <option value="{{ city.id }}">{{ city.name }}</option>
             {% endfor %}
         </select>
     </div>
