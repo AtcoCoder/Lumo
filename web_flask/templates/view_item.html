@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View {{ table_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>View {{ table_name|capitalize }} Item</h1>
+
+        <div class="table-responsive">
+
+        <table class="table table-stripe">
+            <thead>
+
+                <tr>
+                    <th>Attribute</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for attr, value in item.items() %}
+            <tr>
+                <td>{{ attr }}</td>
+                {% if attr == 'properties' %}
+                    <td><a href="/admin/{{ table_name }}/{{ item.id }}/properties">view properties</a></td>
+                {% elif attr == 'images' %}
+                    <td><a href="/admin/{{ table_name }}/{{ item.id }}/images">view images</a></td>
+                {% elif attr == 'areas' %}
+                    <td><a href="/admin/{{ table_name }}/{{ item.id }}/areas">view areas</a></td>
+                {% elif attr == 'cities' %}
+                    <td><a href="/admin/{{ table_name }}/{{ item.id }}/cities">view cities</a></td>
+                {% elif attr == 'amenities'%}
+                    <td>
+                        <ul>
+                            {% for amenity in amenities %}
+                            <li>{{ amenity.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                {% else %}
+                    <td>{{ value }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <a href="/admin/{{ table_name }}">Back to {{ table_name|capitalize }} List</a>
+    </div>
+</body>
+</html>

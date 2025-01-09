@@ -244,3 +244,190 @@ def edit_property(property_id):
 @login_required
 def edit_current_user():
     return render_template('edit_me.html', user=current_user)
+
+@app.route('/admin')
+def admin_page():
+    return render_template('admin.html')
+
+@app.route('/admin/users')
+def all_users():
+    users = User.get_all()
+    return render_template('admin.html', items=users, table_name='users')
+
+@app.route('/admin/properties')
+def all_properties():
+    properties = Property.get_all()
+    return render_template('admin.html', items=properties, table_name='properties')
+
+@app.route('/admin/regions')
+def all_regions():
+    regions = Region.get_all()
+    return render_template('admin.html', items=regions, table_name='regions')
+
+
+@app.route('/admin/areas')
+def all_areas():
+    areas = Area.get_all()
+    return render_template('admin.html', items=areas, table_name='areas')
+
+@app.route('/admin/cities')
+def all_cities():
+    cities = City.get_all()
+    return render_template('admin.html', items=cities, table_name='cities')
+
+@app.route('/admin/amenities')
+def all_amenities():
+    amenities = Amenity.get_all()
+    return render_template('admin.html', items=amenities, table_name='amenities')
+
+
+@app.route('/admin/<table_name>/edit/<id>', methods=['GET', 'POST'])
+# @login_required
+def admin_edit(table_name, id):
+    table_mapping = {
+        "users": User,
+        "properties": Property,
+        "regions": Region,
+        "areas": Area,
+        "cities": City,
+        "amenities": Amenity,
+        "images": Image
+    }
+
+    if table_name not in table_mapping:
+        return jsonify({"error": "Invalid table name"}), 400
+
+    table_class = table_mapping[table_name]
+    item = table_class.get(id)
+
+    if request.method == 'POST':
+        for key in request.form:
+            setattr(item, key, request.form[key])
+        item.save() 
+        return redirect(url_for('admin_page', table_name=table_name))
+
+    relationship_dict = {
+        'Region': ['areas'],
+        'Area': ['cities'],
+        'City': ['properties'],
+        'User': ['properties'],
+        'Property': ['images', 'amenities'],
+        'Amenity': ['properties']
+    }
+    relationships = relationship_dict[item.__class__.__name__]
+    item_dict = item.to_dict()
+    for relationship in relationships:
+        item_dict[relationship] = item.its(relationship)
+    return render_template('edit_item.html', table_name=table_name, item=item_dict)
+
+@app.route('/admin/<table_name>/view/<id>', methods=['GET', 'POST'])
+# @login_required
+def admin_view(table_name, id):
+    table_mapping = {
+        "users": User,
+        "properties": Property,
+        "regions": Region,
+        "areas": Area,
+        "cities": City,
+        "amenities": Amenity,
+        "images": Image
+    }
+
+    if table_name not in table_mapping:
+        return jsonify({"error": "Invalid table name"}), 400
+
+    table_class = table_mapping[table_name]
+    item = table_class.get(id)
+
+    relationship_dict = {
+        'Region': ['areas'],
+        'Area': ['cities'],
+        'City': ['properties'],
+        'User': ['properties'],
+        'Property': ['images', 'amenities'],
+        'Amenity': ['properties']
+    }
+    relationships = relationship_dict[item.__class__.__name__]
+    item_dict = item.to_dict()
+    for relationship in relationships:
+        item_dict[relationship] = item.its(relationship)
+    return render_template('view_item.html', table_name=table_name, item=item_dict)
+
+
+@app.route('/admin/<table_name>/delete/<id>')
+def admin_delete(table_name, id):
+    pass
+
+
+@app.route('/admin/users/<user_id>/properties', methods=['GET'])
+# @login_required
+def admin_view_user_properties(user_id):
+    user = User.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    properties = user.properties
+    return render_template('user_properties.html', user=user, properties=properties)
+
+@app.route('/admin/properties/<property_id>/images')
+def admin_view_property_images(property_id):
+    cur_property = Property.get(property_id)
+    if not cur_property:
+        return jsonify(error="Property not found"), 404
+    images = cur_property.images
+    return render_template('property_images.html', property=cur_property, images=images)
+
+@app.route('/admin/cities/<city_id>/properties', methods=['GET'])
+# @login_required
+def admin_view_city_properties(city_id):
+    city = City.get(city_id)
+    if not city:
+        return jsonify({"error": "City not found"}), 404
+    properties = city.properties
+    return render_template('city_properties.html', city=city, properties=properties)
+
+@app.route('/admin/regions/<region_id>/areas', methods=['GET'])
+# @login_required
+def admin_view_region_areas(region_id):
+    region = Region.get(region_id)
+    if not region:
+        return jsonify({"error": "Region not found"}), 404
+    areas = region.areas
+    return render_template('region_areas.html', region=region, areas=areas)
+
+@app.route('/admin/areas/<area_id>/cities', methods=['GET'])
+# @login_required
+def admin_view_area_cities(area_id):
+    area = Area.get(area_id)
+    if not area:
+        return jsonify({"error": "Area not found"}), 404
+    cities = area.cities
+    return render_template('area_cities.html', area=area, cities=cities)
+
+@app.route('/admin/properties/<property_id>', methods=['GET', 'POST'])
+# @login_required
+def admin_view_property(property_id):
+    property = Property.get(property_id)
+    if not property:
+        return jsonify({"error": "Property not found"}), 404
+    images = property.images
+    amenities = Amenity.get_all()
+    if request.method == 'POST':
+        # Handle adding new images or updating amenities here
+        pass
+    return render_template('property_details.html', property=property, images=images, amenities=amenities)
+
+@app.route('/admin/properties/<property_id>/amenities')
+def admin_view_property_amenities(property_id):
+    cur_property = Property.get(property_id)
+    if not cur_property:
+        return jsonify(error="Property not found"), 404
+    images = cur_property.amenities
+    return render_template('property_images.html', property=cur_property, amenities=amenities)
+
+@app.route('/admin/amenities/<amenity_id>/properties')
+def admin_view_amenity_properties(amenity_id):
+    amenity = Amenity.get(amenity_id)
+    if not amenity:
+        return jsonify(error="Property not found"), 404
+    properties = amenity.properties
+    return render_template('amenity_properties.html', amenity=amenity, properties=properties)

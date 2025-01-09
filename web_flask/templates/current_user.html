@@ -5,13 +5,31 @@
 {% block content %}
 <h2>{{ user.name }}</h2>
 <p><strong>Email:</strong> {{ user.email }}</p>
-<h3>My Properties</h3>
-<ul>
-    {% for property in user.properties %}
-    <li>{{ property.title }} - {{ property.location }}</li>
-    {% endfor %}
-</ul>
 <a href="/users/me/edit" class="btn btn-warning">Edit Profile</a>
 <a href="/logout" class="btn btn-danger">Logout</a>
 <button class="btn btn-danger">Delete Account</button>
+<h3>My Properties</h3>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for property in user.properties %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="{{ property.images[0].image_url }}" class="bd-placeholder-img card-img-top" alt="Property Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ property.title }}</h5>
+                        <p class="card-text">{{ property.description }}</p>
+                        <p><strong>Price:</strong> {{ property.price }}</p>
+                        <div class="btn-group">
+                            <a href="/properties/{{ property.id }}" class="btn btn-sm btn-outline-secondary">View</a>
+                            <a href="/properties/{{ property.id }}/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                          </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 {% endblock %}
