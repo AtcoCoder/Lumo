@@ -354,9 +354,6 @@ def admin_view(table_name, id):
     return render_template('view_item.html', table_name=table_name, item=item_dict)
 
 
-@app.route('/admin/<table_name>/delete/<id>')
-def admin_delete(table_name, id):
-    pass
 
 
 @app.route('/admin/users/<user_id>/properties', methods=['GET'])
@@ -431,3 +428,185 @@ def admin_view_amenity_properties(amenity_id):
         return jsonify(error="Property not found"), 404
     properties = amenity.properties
     return render_template('amenity_properties.html', amenity=amenity, properties=properties)
+
+
+
+@app.route('/admin/add/region', methods=['GET', 'POST'])
+# @login_required
+def add_region():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if not name:
+            flash('Region name is required!', 'error')
+            return redirect(request.url)
+        region = Region.get_by_name(name)
+        if region:
+            flash('Region exist already')
+            return redirect(url_for('admin_page', table_name='regions'))
+        new_region = Region(name=name)
+        new_region.save()
+        flash('Region added successfully!', 'success')
+        return redirect(url_for('admin_page', table_name='regions'))
+
+    return render_template('add_region.html')
+
+
+@app.route('/admin/add/area', methods=['GET', 'POST'])
+# @login_required
+def add_area():
+    regions = Region.get_all()  # Fetch all regions to associate with the area
+    if request.method == 'POST':
+        name = request.form.get('name')
+        region_id = request.form.get('region_id')
+        
+        if not name or not region_id:
+            flash('Both area name and region are required!', 'error')
+            return redirect(request.url)
+        area = Area.get_by_name(name)
+        if area:
+            flash('Area already exist')
+            return redirect(url_for('admin_page')), 400
+        
+        new_area = Area(name=name, region_id=region_id)
+        new_area.save()
+        flash('Area added successfully!', 'success')
+        return redirect(url_for('admin_page', table_name='areas'))
+
+    return render_template('add_area.html', regions=regions)
+
+
+@app.route('/admin/add/city', methods=['GET', 'POST'])
+# @login_required
+def add_city():
+    areas = Area.get_all()  # Fetch all areas to associate with the city
+    if request.method == 'POST':
+        name = request.form.get('name')
+        area_id = request.form.get('area_id')
+        
+        if not name or not area_id:
+            flash('Both city name and area are required!', 'error')
+            return redirect(request.url)
+        
+        city = City.get_by_name(name)
+        if city:
+            flash('City exist already')
+            return redirect(url_for('admin_page', table_name='cities')), 400
+        
+        new_city = City(name=name, area_id=area_id)
+        new_city.save()
+        flash('City added successfully!', 'success')
+        return redirect(url_for('admin_page', table_name='cities'))
+
+    return render_template('add_city.html', areas=areas)
+
+
+@app.route('/admin/add/amenity', methods=['GET', 'POST'])
+# @login_required
+def add_amenity():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        if not name:
+            flash('Amenity name is required!', 'error')
+            return redirect(request.url)
+        amenity = Amenity.get_by_name(name)
+        if amenity:
+            flash('Amenity exist already')
+            return redirect(url_for('admin_page', table_name='amenities'))
+        new_amenity = Amenity(name=name)
+        new_amenity.save()
+        flash('Amenity added successfully!', 'success')
+        return redirect(url_for('admin_page', table_name='amenities'))
+
+    return render_template('add_amenity.html')
+
+@app.route('/admin/users/delete/<user_id>', methods=['POST'])
+# @login_required
+def delete_user(user_id):
+    # if request.method == 'GET':
+        # return redirect(url_for('admin_page', table_name='users'))
+    user = User.get(user_id)
+    if not user:
+        flash('User not found!', 'error')
+        return redirect(url_for('admin_page', table_name='users'))
+    
+    user.delete()
+    flash('User deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='users'))
+
+
+@app.route('/admin/properties/delete/<property_id>', methods=['POST'])
+# @login_required
+def delete_property(property_id):
+    property = Property.get(property_id)
+    if not property:
+        flash('Property not found!', 'error')
+        return redirect(url_for('admin_page', table_name='properties'))
+    
+    property.delete()
+    flash('Property deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='properties'))
+
+
+@app.route('/admin/regions/delete/<region_id>', methods=['POST'])
+# @login_required
+def delete_region(region_id):
+    region = Region.get(region_id)
+    if not region:
+        flash('Region not found!', 'error')
+        return redirect(url_for('admin_page', table_name='regions'))
+    
+    region.delete()
+    flash('Region deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='regions'))
+
+
+@app.route('/admin/areas/delete/<area_id>', methods=['POST'])
+# @login_required
+def delete_area(area_id):
+    area = Area.get(area_id)
+    if not area:
+        flash('Area not found!', 'error')
+        return redirect(url_for('admin_page', table_name='areas'))
+    
+    area.delete()
+    flash('Area deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='areas'))
+
+
+@app.route('/admin/cities/delete/<city_id>', methods=['POST'])
+# @login_required
+def delete_city(city_id):
+    city = City.get(city_id)
+    if not city:
+        flash('City not found!', 'error')
+        return redirect(url_for('admin_page', table_name='cities'))
+    
+    city.delete()
+    flash('City deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='cities'))
+
+
+@app.route('/admin/images/delete/<image_id>', methods=['POST'])
+# @login_required
+def delete_image(image_id):
+    image = Image.get(image_id)
+    if not image:
+        flash('Image not found!', 'error')
+        return redirect(request.referrer or url_for('admin_page', table_name='images'))
+    
+    image.delete()
+    flash('Image deleted successfully!', 'success')
+    return redirect(request.referrer or url_for('admin_page', table_name='images'))
+
+
+@app.route('/admin/amenities/delete//<amenity_id>', methods=['POST'])
+# @login_required
+def delete_amenity(amenity_id):
+    amenity = Amenity.get(amenity_id)
+    if not amenity:
+        flash('Amenity not found!', 'error')
+        return redirect(url_for('admin_page', table_name='amenities'))
+    
+    amenity.delete()
+    flash('Amenity deleted successfully!', 'success')
+    return redirect(url_for('admin_page', table_name='amenities'))
