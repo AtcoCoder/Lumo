@@ -8,10 +8,11 @@ from models.amenity import Amenity
 from models.property import Property
 from models.region import Region
 from models.image import Image
-from flask import request, url_for, redirect
+from flask import request, url_for, redirect, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_login import login_required
+from functools import wraps
 
 
 login_manager = LoginManager()
@@ -22,7 +23,9 @@ def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # If id is not 1 then return abort with 403 error
-        if current_user.email != 'admin@email.com':
+        if current_user.is_anonymous:
+            return abort(403)
+        if current_user.id != 'bf9dae03-2e21-4336-9c45-d7943255e05b':
             return abort(403)
         # Otherwise continue with the route function
         return f(*args, **kwargs)
@@ -31,6 +34,7 @@ def admin_only(f):
 
 @login_manager.user_loader
 def load_user(user_id):
+    print(user_id)
     return User.get(user_id)
 
 
@@ -59,6 +63,9 @@ def login():
             flash('Password incorrect, please try again.')
             return redirect(url_for('login'))
         login_user(user)
+        print(current_user.id)
+        if current_user.id == 'bf9dae03-2e21-4336-9c45-d7943255e05b':
+            return redirect(url_for('admin_page'))
         return redirect(url_for('home'))
     return render_template('signin.html', current_user=current_user)
 
@@ -246,43 +253,50 @@ def edit_current_user():
     return render_template('edit_me.html', user=current_user)
 
 @app.route('/admin')
+@admin_only
 def admin_page():
     return render_template('admin.html')
 
 @app.route('/admin/users')
+@admin_only
 def all_users():
     users = User.get_all()
     return render_template('admin.html', items=users, table_name='users')
 
 @app.route('/admin/properties')
+@admin_only
 def all_properties():
     properties = Property.get_all()
     return render_template('admin.html', items=properties, table_name='properties')
 
 @app.route('/admin/regions')
+@admin_only
 def all_regions():
     regions = Region.get_all()
     return render_template('admin.html', items=regions, table_name='regions')
 
 
 @app.route('/admin/areas')
+@admin_only
 def all_areas():
     areas = Area.get_all()
     return render_template('admin.html', items=areas, table_name='areas')
 
 @app.route('/admin/cities')
+@admin_only
 def all_cities():
     cities = City.get_all()
     return render_template('admin.html', items=cities, table_name='cities')
 
 @app.route('/admin/amenities')
+@admin_only
 def all_amenities():
     amenities = Amenity.get_all()
     return render_template('admin.html', items=amenities, table_name='amenities')
 
 
 @app.route('/admin/<table_name>/edit/<id>', methods=['GET', 'POST'])
-# @login_required
+@admin_only
 def admin_edit(table_name, id):
     table_mapping = {
         "users": User,
@@ -293,6 +307,13 @@ def admin_edit(table_name, id):
         "amenities": Amenity,
         "images": Image
     }
+    cant_edits = [
+        '__class__',
+        'created_at',
+        'updated_at', 
+        'properties',
+        '__class__',
+    ]
 
     if table_name not in table_mapping:
         return jsonify({"error": "Invalid table name"}), 400
@@ -302,26 +323,32 @@ def admin_edit(table_name, id):
 
     if request.method == 'POST':
         for key in request.form:
-            setattr(item, key, request.form[key])
+            if key not in cant_edits:
+                setattr(item, key, request.form[key])
         item.save() 
         return redirect(url_for('admin_page', table_name=table_name))
 
-    relationship_dict = {
-        'Region': ['areas'],
-        'Area': ['cities'],
-        'City': ['properties'],
-        'User': ['properties'],
-        'Property': ['images', 'amenities'],
-        'Amenity': ['properties']
-    }
-    relationships = relationship_dict[item.__class__.__name__]
+    # relationship_dict = {
+    #     'Region': ['areas'],
+    #     'Area': ['cities'],
+    #     'City': ['properties'],
+    #     'User': ['properties'],
+    #     'Property': ['images', 'amenities'],
+    #     'Amenity': ['properties'],
+    #     'Image': []
+    # }
+    # relationships = relationship_dict[item.__class__.__name__]
     item_dict = item.to_dict()
-    for relationship in relationships:
-        item_dict[relationship] = item.its(relationship)
+    for cant_edit in cant_edits:
+        if cant_edit in item_dict:
+            del item_dict[cant_edit]
+    # for relationship in relationships:
+    #     item_dict[relationship] = item.its(relationship)
     return render_template('edit_item.html', table_name=table_name, item=item_dict)
 
 @app.route('/admin/<table_name>/view/<id>', methods=['GET', 'POST'])
 # @login_required
+@admin_only
 def admin_view(table_name, id):
     table_mapping = {
         "users": User,
@@ -358,6 +385,7 @@ def admin_view(table_name, id):
 
 @app.route('/admin/users/<user_id>/properties', methods=['GET'])
 # @login_required
+@admin_only
 def admin_view_user_properties(user_id):
     user = User.get(user_id)
     if not user:
@@ -366,6 +394,7 @@ def admin_view_user_properties(user_id):
     return render_template('user_properties.html', user=user, properties=properties)
 
 @app.route('/admin/properties/<property_id>/images')
+@admin_only
 def admin_view_property_images(property_id):
     cur_property = Property.get(property_id)
     if not cur_property:
@@ -375,6 +404,7 @@ def admin_view_property_images(property_id):
 
 @app.route('/admin/cities/<city_id>/properties', methods=['GET'])
 # @login_required
+@admin_only
 def admin_view_city_properties(city_id):
     city = City.get(city_id)
     if not city:
@@ -384,6 +414,7 @@ def admin_view_city_properties(city_id):
 
 @app.route('/admin/regions/<region_id>/areas', methods=['GET'])
 # @login_required
+@admin_only
 def admin_view_region_areas(region_id):
     region = Region.get(region_id)
     if not region:
@@ -393,6 +424,7 @@ def admin_view_region_areas(region_id):
 
 @app.route('/admin/areas/<area_id>/cities', methods=['GET'])
 # @login_required
+@admin_only
 def admin_view_area_cities(area_id):
     area = Area.get(area_id)
     if not area:
@@ -402,6 +434,7 @@ def admin_view_area_cities(area_id):
 
 @app.route('/admin/properties/<property_id>', methods=['GET', 'POST'])
 # @login_required
+@admin_only
 def admin_view_property(property_id):
     property = Property.get(property_id)
     if not property:
@@ -414,6 +447,7 @@ def admin_view_property(property_id):
     return render_template('property_details.html', property=property, images=images, amenities=amenities)
 
 @app.route('/admin/properties/<property_id>/amenities')
+@admin_only
 def admin_view_property_amenities(property_id):
     cur_property = Property.get(property_id)
     if not cur_property:
@@ -422,6 +456,7 @@ def admin_view_property_amenities(property_id):
     return render_template('property_images.html', property=cur_property, amenities=amenities)
 
 @app.route('/admin/amenities/<amenity_id>/properties')
+@admin_only
 def admin_view_amenity_properties(amenity_id):
     amenity = Amenity.get(amenity_id)
     if not amenity:
@@ -432,7 +467,7 @@ def admin_view_amenity_properties(amenity_id):
 
 
 @app.route('/admin/add/region', methods=['GET', 'POST'])
-# @login_required
+@admin_only
 def add_region():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -452,7 +487,7 @@ def add_region():
 
 
 @app.route('/admin/add/area', methods=['GET', 'POST'])
-# @login_required
+@admin_only
 def add_area():
     regions = Region.get_all()  # Fetch all regions to associate with the area
     if request.method == 'POST':
@@ -476,7 +511,7 @@ def add_area():
 
 
 @app.route('/admin/add/city', methods=['GET', 'POST'])
-# @login_required
+@admin_only
 def add_city():
     areas = Area.get_all()  # Fetch all areas to associate with the city
     if request.method == 'POST':
@@ -501,7 +536,7 @@ def add_city():
 
 
 @app.route('/admin/add/amenity', methods=['GET', 'POST'])
-# @login_required
+@admin_only
 def add_amenity():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -520,7 +555,7 @@ def add_amenity():
     return render_template('add_amenity.html')
 
 @app.route('/admin/users/delete/<user_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_user(user_id):
     # if request.method == 'GET':
         # return redirect(url_for('admin_page', table_name='users'))
@@ -535,7 +570,7 @@ def delete_user(user_id):
 
 
 @app.route('/admin/properties/delete/<property_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_property(property_id):
     property = Property.get(property_id)
     if not property:
@@ -548,7 +583,7 @@ def delete_property(property_id):
 
 
 @app.route('/admin/regions/delete/<region_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_region(region_id):
     region = Region.get(region_id)
     if not region:
@@ -561,7 +596,7 @@ def delete_region(region_id):
 
 
 @app.route('/admin/areas/delete/<area_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_area(area_id):
     area = Area.get(area_id)
     if not area:
@@ -574,7 +609,7 @@ def delete_area(area_id):
 
 
 @app.route('/admin/cities/delete/<city_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_city(city_id):
     city = City.get(city_id)
     if not city:
@@ -587,7 +622,7 @@ def delete_city(city_id):
 
 
 @app.route('/admin/images/delete/<image_id>', methods=['POST'])
-# @login_required
+@admin_only
 def delete_image(image_id):
     image = Image.get(image_id)
     if not image:
@@ -599,8 +634,8 @@ def delete_image(image_id):
     return redirect(request.referrer or url_for('admin_page', table_name='images'))
 
 
-@app.route('/admin/amenities/delete//<amenity_id>', methods=['POST'])
-# @login_required
+@app.route('/admin/amenities/delete/<amenity_id>', methods=['POST'])
+@admin_only
 def delete_amenity(amenity_id):
     amenity = Amenity.get(amenity_id)
     if not amenity:

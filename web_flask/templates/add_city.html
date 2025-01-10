@@ -15,6 +15,7 @@
         <input type="text" id="name" name="name" required>
         <label for="area_id">Select Area:</label>
         <select id="area_id" name="area_id" required>
+            <option value="" disabled selected>Select a area</option>
             {% for area in areas %}
             <option value="{{ area.id }}">{{ area.name }}</option>
             {% endfor %}

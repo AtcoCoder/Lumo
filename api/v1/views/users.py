@@ -330,3 +330,28 @@ def get_current_user_properties():
         property_dict['images'] = property.its('images')
         property_list.append(property_dict)
     return jsonify(properties=property_list)
+
+
+@app_views.route(
+    '/properties/<property_id>/images',
+    strict_slashes=False,
+    methods=['POST']
+)
+@jwt_required()
+def add_property_image(property_id):
+    """Add an image"""
+    username = get_jwt_identity()
+    user = User.get_by_username(username)
+    if not user:
+        return jsonify(message='User Not Found.'), 400
+    property = Property.get(property_id)
+    if not property:
+        return jsonify(message='Property not found'), 400
+    image_url = request.get_json().get('image_url')
+    if not image_url:
+        return jsonify(message='Missing image url'), 400
+    image = Image(image_url=image_url, property_id=property_id)
+    print(image)
+    image.save()
+    return jsonify(message='Image successfully added.')
+

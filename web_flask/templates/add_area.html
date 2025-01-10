@@ -15,6 +15,7 @@
         <input type="text" id="name" name="name" required>
         <label for="region_id">Select Region:</label>
         <select id="region_id" name="region_id" required>
+            <option value="" disabled selected>Select a region</option>
             {% for region in regions %}
             <option value="{{ region.id }}">{{ region.name }}</option>
             {% endfor %}

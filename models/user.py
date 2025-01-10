@@ -112,6 +112,10 @@ class User(BaseModel):
         """Indicate the user is active"""
         return True
 
+    @property
+    def is_anonymous(self):
+        """Indicates that the user is anonymous"""
+        return False
     
     # # @property
     # # def email(self):
