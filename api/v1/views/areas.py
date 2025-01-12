@@ -7,31 +7,6 @@ from models.region import Region
 from flask_jwt_extended import jwt_required, get_jwt
 
 
-# @app_views.route(
-#     '/areas/add',
-#     methods=['POST'],
-#     strict_slashes=False
-# )
-# def add_area():
-#     """Adds area to database"""
-#     name = request.form.get('name')
-#     region_name = request.form.get('region_name')
-#     region = Region.get_by_name(region_name)
-#     if not region:
-#         return jsonify(message='Region Not Found'), 400
-#     if not name:
-#         return jsonify(message='Missing name')
-#     area = Area.get_by_name(name)
-#     if area:
-#         return jsonify(message='Area already exist'), 400
-#     area = Area(
-#         name=name,
-#         region_id=region.id
-#     )
-#     area.save()
-#     return jsonify(message='Area succesfully added')
-    
-
 @app_views.route(
     '/areas',
     strict_slashes=False
@@ -51,7 +26,25 @@ def get_area(area_id):
 
 
 @app_views.route(
-    '/areas/<area_id>',
+    '/areas/<area_id>/cities',
+    strict_slashes=False
+)
+def get_area_cities(area_id):
+    """Get area cities route"""
+    area = Area.get(area_id)
+    if not area:
+        return jsonify(message='Area Not Found'), 400
+    cities = area.its('cities', 'properties')
+    return jsonify(cities=cities)
+
+
+####################################################################################
+####                            Admin areas Routes                              ####
+####################################################################################
+
+
+@app_views.route(
+    '/admin/areas/<area_id>',
     methods=['DELETE', 'PATCH'],
     strict_slashes=False
 )
@@ -75,20 +68,9 @@ def w_areas(area_id):
 
 
 
-@app_views.route(
-    '/areas/<area_id>/cities',
-    strict_slashes=False
-)
-def get_area_cities(area_id):
-    """Get area cities route"""
-    area = Area.get(area_id)
-    if not area:
-        return jsonify(message='Area Not Found'), 400
-    cities = area.its('cities', 'properties')
-    return jsonify(cities=cities)
 
 @app_views.route(
-    'areas/<area_id>/cities',
+    '/admin/areas/<area_id>/cities',
     methods=['POST'],
     strict_slashes=False
 )

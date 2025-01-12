@@ -4,7 +4,7 @@ from flask import request, jsonify
 from api.v1.views import app_views
 from flask_jwt_extended import jwt_required, get_jwt
 
-@app_views.route('/amenities', methods=['POST'], strict_slashes=False)
+@app_views.route('/admin/amenities', methods=['POST'], strict_slashes=False)
 @jwt_required()
 def add_amenities():
     """Add amenities route"""
@@ -28,13 +28,13 @@ def add_amenities():
     return jsonify(message='Amenity successfully added.')
 
 
-@app_views.route('/amenities', strict_slashes=False)
+@app_views.route('/admin/amenities', strict_slashes=False)
 def get_amenities():
     amenities = Amenity.get_all()
     return jsonify(amenities=amenities)
 
 @app_views.route(
-    '/amenities/<amenity_id>',
+    '/admin/amenities/<amenity_id>',
     methods=['DELETE', 'PATCH'],
     strict_slashes=False
 )

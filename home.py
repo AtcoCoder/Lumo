@@ -38,6 +38,13 @@ def load_user(user_id):
     return User.get(user_id)
 
 
+@app.template_filter('currency_format')
+def currency_format(value):
+    """Format a number with commas."""
+    if isinstance(value, (int, float)):
+        return f"{value:,}"
+    return value
+
 
 @app.route('/', strict_slashes=False)
 def home():
@@ -252,6 +259,21 @@ def edit_property(property_id):
 def edit_current_user():
     return render_template('edit_me.html', user=current_user)
 
+
+@app.route(
+    '/properties/search',
+    strict_slashes=False,
+    methods=['GET', 'POST']
+)
+def search():
+    """Search for a property"""
+    if request.method == 'POST':
+        search_query = request.form.get('search')
+        properties = Property.search(search_query)
+        return render_template('search.html', properties=properties, search_query=search_query)
+    return render_template(url_for('home'))
+
+
 @app.route('/admin')
 @admin_only
 def admin_page():
@@ -324,7 +346,10 @@ def admin_edit(table_name, id):
     if request.method == 'POST':
         for key in request.form:
             if key not in cant_edits:
-                setattr(item, key, request.form[key])
+                value = request.form[key]
+                if key == 'is_active':
+                    value = eval(value)
+                setattr(item, key, value)
         item.save() 
         return redirect(url_for('admin_page', table_name=table_name))
 

@@ -163,7 +163,6 @@ def get_me():
     if request.method == 'DELETE':
         user.delete()
         jti = get_jwt()['jti']
-        print('jti:', jti)
         blocked_token = BlockedToken(
             jti=jti
         )
@@ -172,38 +171,6 @@ def get_me():
 
     user_dict = user.to_dict_with('properties', user.properties)
     return jsonify(me=user_dict)
-
-
-
-
-@app_views.route(
-    '/users/<user_id>',
-    methods=['PATCH', 'DELETE'],
-    strict_slashes=False
-)
-@jwt_required()
-def update_delete_user(user_id):
-    """Update/delete user (For admin)"""
-    claims = get_jwt()
-    role = claims.get('role')
-    if role != 'Admin':
-        return jsonify(msg="Access forbidden"), 403
-    user = User.get(user_id)
-    if not user:
-        return jsonify(message='User not found'), 400
-    if request.method == 'DELETE':
-        user.delete()
-        return jsonify(message='User deleted successfully')
-    can_updates = [
-        'email',
-        'username',
-        'password',
-        'phone_number',
-        'whatsapp'
-    ]
-    to_updates = user.get_infos_to_update(request.get_json(), can_updates)
-    user.update(**to_updates)
-    return jsonify(message='User successfully updated')
 
 
 @app_views.route('/protected')
@@ -260,39 +227,6 @@ def add_property():
     return jsonify(message='Property succesfully added.')
 
 
-@app_views.route(
-    '/properties/<property_id>',
-    strict_slashes=False,
-    methods=['PATCH', 'DELETE']
-)
-@jwt_required()
-def w_property(property_id):
-    """Update/delete property"""
-    identity = get_jwt_identity()
-    user = User.get_by_username(identity)
-    claims = get_jwt()
-    role = claims.get('role')
-    if role != 'Admin' and not user:
-        return jsonify(message='User not found'), 400
-    property = Property.get(property_id)
-    if not property:
-        return jsonify(message='Property not found'), 400
-    
-    if request.method == 'PATCH':
-        data = request.get_json()
-        can_updates = [
-            'price',
-            'title',
-            'description',
-            'property_type',
-            'is_active'
-        ]
-        updates = property.get_infos_to_update(data, can_updates)
-        property.update(**updates)
-        return jsonify(message='Succesfully updated.')
-    property.delete()
-    return jsonify(message='Property deleted')
-
 
 @app_views.route(
     '/users/<user_id>/properties',
@@ -323,6 +257,7 @@ def get_current_user_properties():
     user = User.get_by_username(username)
     if not user:
         return jsonify(message='User Not Found.'), 400
+
     properties = user.properties
     property_list = []
     for property in properties:
@@ -347,6 +282,9 @@ def add_property_image(property_id):
     property = Property.get(property_id)
     if not property:
         return jsonify(message='Property not found'), 400
+
+    if user.id != property.user_id:
+        return jsonify(message='Unauthorized User'), 403  
     image_url = request.get_json().get('image_url')
     if not image_url:
         return jsonify(message='Missing image url'), 400
@@ -355,3 +293,112 @@ def add_property_image(property_id):
     image.save()
     return jsonify(message='Image successfully added.')
 
+
+@app_views.route(
+    '/properties/<property_id>',
+    strict_slashes=False,
+    methods=['PATCH', 'DELETE']
+)
+@jwt_required()
+def w_property(property_id):
+    """Update/delete property"""
+    identity = get_jwt_identity()
+    user = User.get_by_username(identity)
+    if not user:
+        return jsonify(message='User not found'), 400
+    property = Property.get(property_id)
+    if not property:
+        return jsonify(message='Property not found'), 400
+    if user.id != property.user_id:
+        return jsonify(message='Unauthorized User'), 403 
+    
+    if request.method == 'PATCH':
+        data = request.get_json()
+        can_updates = [
+            'price',
+            'title',
+            'description',
+            'property_type',
+            'is_active'
+        ]
+        amenities = data.get('amenities')
+
+        updates = property.get_infos_to_update(data, can_updates)
+        if amenities:
+            new_amenities = [Amenity.get(amenity) for amenity in amenities]
+            property.amenities = new_amenities
+        property.update(**updates)
+        return jsonify(message='Succesfully updated.')
+    property.delete()
+    return jsonify(message='Property deleted')
+
+
+####################################################################################
+####                            Admin Users Routes                              ####
+####################################################################################
+
+
+@app_views.route(
+    '/admin/users/<user_id>',
+    methods=['PATCH', 'DELETE'],
+    strict_slashes=False
+)
+@jwt_required()
+def update_delete_user_by_admin(user_id):
+    """Update/delete user (For admin)"""
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin':
+        return jsonify(msg="Access forbidden"), 403
+    user = User.get(user_id)
+    if not user:
+        return jsonify(message='User not found'), 400
+    if request.method == 'DELETE':
+        user.delete()
+        return jsonify(message='User deleted successfully')
+    can_updates = [
+        'email',
+        'username',
+        'password',
+        'phone_number',
+        'whatsapp'
+    ]
+    to_updates = user.get_infos_to_update(request.get_json(), can_updates)
+    user.update(**to_updates)
+    return jsonify(message='User successfully updated')
+
+
+@app_views.route(
+    '/admin/properties/<property_id>',
+    strict_slashes=False,
+    methods=['PATCH', 'DELETE']
+)
+@jwt_required()
+def w_property_by_admin(property_id):
+    """Update/delete property"""
+    claims = get_jwt()
+    role = claims.get('role')
+    if role != 'Admin':
+        return jsonify(message='Access forbidden'), 403
+    property = Property.get(property_id)
+    if not property:
+        return jsonify(message='Property not found'), 400
+    
+    if request.method == 'PATCH':
+        data = request.get_json()
+        can_updates = [
+            'price',
+            'title',
+            'description',
+            'property_type',
+            'is_active'
+        ]
+        amenities = data.getlist('amenities')
+        if amenities:
+            new_amenities = [Amenity.get_by_name(amenity) for amenity in amenities]
+            property.amenities = new_amenities
+        updates = property.get_infos_to_update(data, can_updates)
+        property.update(**updates)
+        return jsonify(message='Succesfully updated.')
+    property.delete()
+    return jsonify(message='Property deleted')

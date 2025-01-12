@@ -125,6 +125,7 @@ class BaseModel(Base):
         for attr, value in attrs.items():
             if value:
                 to_update[attr] = value
+        from pprint import pprint
         return to_update
         
     @classmethod

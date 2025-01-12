@@ -11,11 +11,16 @@
             color: #414141;
         }
         .navbar-brand {
-            color: #008ECC;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .body-brand {
+            color: #1ABCFE;
+            text-decoration: none;
             font-weight: bold;
         }
         .navbar-nav .nav-link {
-            color: #3FA8E9;
+            color: #ffffff;
         }
         .btn-sell {
             background-color: #1ABCFE;
@@ -92,13 +97,18 @@
             -webkit-line-clamp: 3; 
             -webkit-box-orient: vertical;
         }
+        .bg-style {
+            background-color: #008ECC;
+        }
     </style>
 </head>
 <body>
     {% if not exclude_navbar %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg bg-style">
         <div class="container">
-            <a class="navbar-brand" href="/">Lumo</a>
+            <a class="navbar-brand" href="/">
+                <img src="../static/images/lumo_logo_bg_dark.png" alt="Lumo" width="75" height="24">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
