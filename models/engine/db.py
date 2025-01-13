@@ -33,7 +33,13 @@ class DB():
     __engine = None
     def __init__(self, db_url) -> None:
         """Instance Initializer"""
-        self.__engine = create_engine(db_url)
+        self.__engine = create_engine(
+            db_url,
+            pool_size=20,
+            max_overflow=5,
+            pool_recycle=3600,
+            pool_timeout=30
+        )
     
     @property
     def session(self):
