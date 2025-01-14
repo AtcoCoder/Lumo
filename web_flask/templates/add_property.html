@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 <style>
-    #image-urls-container .input-group {
+    #image-uploads-container .input-group {
         display: flex;
         align-items: center;
     }
 
-    #image-urls-container .input-group input {
+    #image-uploads-container .input-group input {
         flex-grow: 1; /* Ensure input takes up available space */
     }
 
-    #image-urls-container .input-group button {
+    #image-uploads-container .input-group button {
         margin-left: 10px; /* Space between input and button */
     }
 </style>
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
-<form class="text-center" method="POST" id="add-property-form">
+<form class="text-center" method="POST" enctype="multipart/form-data" id="add-property-form">
     <div class="mb-3">
         <label for="city" class="form-label">City</label>
         <select class="form-select" id="city" name="city" required>
@@ -57,15 +57,14 @@
             {% endfor %}
         </div>
     </div>
-    <div class="mb-3" id="image-urls-container">
-        <label class="form-label">Image URLs (Enter at least 5)</label>
-        <input type="url" class="form-control mb-2" placeholder="Image URL 1" name="image_urls[]" required>
-        <input type="url" class="form-control mb-2" placeholder="Image URL 2" name="image_urls[]" required>
-        <input type="url" class="form-control mb-2" placeholder="Image URL 3" name="image_urls[]" required>
-        <input type="url" class="form-control mb-2" placeholder="Image URL 4" name="image_urls[]" required>
-        <input type="url" class="form-control mb-2" placeholder="Image URL 5" name="image_urls[]" required>
-    </div>
 
+    <div class="mb-3" id="image-container">
+        <label class="form-label">Upload Images (At least 5, max 50)</label>
+        <!-- Initial 5 file inputs -->
+        {% for i in range(1, 6) %}
+        <input type="file" class="form-control mb-2 image-upload" name="images[]" accept=".png, .jpeg, .jpg, .gif .webp" required>
+        {% endfor %}
+    </div>
     <button type="button" class="btn btn-secondary mb-3" id="add-more-images">Add More Images</button>
     <div class="mb-3">
         <button type="submit" class="btn btn-primary btn-msub mt-3">Add Property</button>
@@ -73,44 +72,34 @@
 </form>
 
 <script>
-    document.getElementById('add-more-images').addEventListener('click', function () {
-        const container = document.getElementById('image-urls-container');
-        const inputCount = container.querySelectorAll('input').length + 1; // Increment count
-        
-        // Create input field
-        const newDiv = document.createElement('div');
-        newDiv.className = 'd-flex align-items-center mb-2';
+    const maxImages = 50; // Limit of 50 images
+    const container = document.getElementById('image-container');
+    const addMoreButton = document.getElementById('add-more-images');
+    let imageCount = 5; // Start with 5 required images
 
+    addMoreButton.addEventListener('click', function () {
+        if (imageCount >= maxImages) {
+            alert(`You can upload a maximum of ${maxImages} images.`);
+            return;
+        }
+
+        // Create a new input field
         const newInput = document.createElement('input');
-        newInput.type = 'url';
-        newInput.className = 'form-control me-2';
-        newInput.placeholder = `Image URL ${inputCount}`;
-        newInput.name = 'image_urls[]';
+        newInput.type = 'file';
+        newInput.className = 'form-control mb-2 image-upload';
+        newInput.name = 'images[]';
+        newInput.accept = '.png, .jpeg, .jpg, .gif';
 
-        // Create delete button
-        const deleteButton = document.createElement('button');
-        deleteButton.type = 'button';
-        deleteButton.className = 'btn btn-danger btn-sm';
-        deleteButton.textContent = 'Delete';
-
-        // Append input and button to the div
-        newDiv.appendChild(newInput);
-        newDiv.appendChild(deleteButton);
-
-        // Add event listener for the delete button
-        deleteButton.addEventListener('click', function () {
-            container.removeChild(newDiv);
-        });
-
-        container.appendChild(newDiv);
+        container.appendChild(newInput); // Add to the container
+        imageCount++;
     });
 
+    // Ensure at least 5 images are uploaded before submission
     document.getElementById('add-property-form').addEventListener('submit', function (event) {
-        const imageInputs = document.querySelectorAll('#image-urls-container input');
-        const filledImages = Array.from(imageInputs).filter(input => input.value.trim() !== '');
-        if (filledImages.length < 5) {
-            event.preventDefault(); // Prevent form submission
-            alert('Please provide at least 5 image URLs.');
+        const fileInputs = document.querySelectorAll('.image-upload');
+        if (fileInputs.length < 5) {
+            event.preventDefault();
+            alert('Please upload at least 5 images.');
         }
     });
 </script>

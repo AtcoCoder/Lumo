@@ -13,10 +13,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_login import login_required
 from functools import wraps
+import os
+import datetime
 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 
 
 def admin_only(f):
@@ -34,7 +37,6 @@ def admin_only(f):
 
 @login_manager.user_loader
 def load_user(user_id):
-    print(user_id)
     return User.get(user_id)
 
 
@@ -44,6 +46,26 @@ def currency_format(value):
     if isinstance(value, (int, float)):
         return f"{value:,}"
     return value
+
+
+def get_file_path(filename):
+    """returns path name for a file"""
+    now = datetime.datetime.now()
+    day = now.strftime('%d')
+    month = now.strftime('%b')
+    year = now.strftime('%Y')
+    time =  now.strftime('%H%M%S%f')
+    folder_path = os.path.join('web_flask', 'static', 'images', 'uploads', year, month, day)
+    time =  now.strftime('%H%M%S%f')
+    file_extension = filename.rsplit('.', 1)[1].lower()
+    filename = f'lumo-{time}.{file_extension}'
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    file_path = os.path.join(folder_path, filename)
+    relative_url = f'/static/images/uploads/{year}/{month}/{day}/{filename}'
+    return file_path, relative_url
 
 
 @app.route('/', strict_slashes=False)
@@ -190,14 +212,25 @@ def add_property_c(area_id):
         description = request.form.get('description')
         price = request.form.get('price')
         property_type = request.form.get('type')
-        image_urls = request.form.getlist('image_urls[]')
+        files = request.files.getlist('images[]')
+        image_urls = []
+
+        if len(files) < 5:
+            flash("Please enter at least 5 images")
+            return redirect(url_for('add_property_c', area_id=area_id))
+        
+        for file in files:
+            if file:
+                file_path, image_url = get_file_path(file.filename)
+                file.save(file_path)
+                image_urls.append(image_url)
         amenity_ids = request.form.getlist('amenities[]')
         amenities = [Amenity.get(amenity_id) for amenity_id in amenity_ids]
+
         if None in [title, description, price, property_type, image_urls]:
-            return jsonify(message="Missing Field"), 400
-        if len(image_urls) < 5:
-            return jsonify(message="Please enter at least 5 images"), 400
-        print(image_urls)
+            flash('Missing required field')
+            return redirect(url_for('add_property_c', area_id=area_id))
+
         images = [Image(image_url=url) for url in image_urls]
 
         new_property = Property(
@@ -213,6 +246,7 @@ def add_property_c(area_id):
         )
         new_property.images = images
         new_property.save()
+        flash('Property successfully added')
         return redirect(url_for('home'))
         
     amenities = Amenity.get_all()
@@ -315,6 +349,13 @@ def all_cities():
 def all_amenities():
     amenities = Amenity.get_all()
     return render_template('admin.html', items=amenities, table_name='amenities')
+
+@app.route('/admin/images')
+@admin_only
+def all_images():
+    images = Image.get_all()
+    return render_template('admin.html', items=images, table_name='images', count=Image.count())
+
 
 
 @app.route('/admin/<table_name>/edit/<id>', methods=['GET', 'POST'])
@@ -601,8 +642,10 @@ def delete_property(property_id):
     if not property:
         flash('Property not found!', 'error')
         return redirect(url_for('admin_page', table_name='properties'))
-    
+    property_images = property.images
     property.delete()
+    for image in property_images:
+        image.delete()
     flash('Property deleted successfully!', 'success')
     return redirect(url_for('admin_page', table_name='properties'))
 
@@ -653,8 +696,12 @@ def delete_image(image_id):
     if not image:
         flash('Image not found!', 'error')
         return redirect(request.referrer or url_for('admin_page', table_name='images'))
-    
+    image_path = image.image_url
+
+    if os.path.exists(image_path):
+        os.remove(image_path)
     image.delete()
+
     flash('Image deleted successfully!', 'success')
     return redirect(request.referrer or url_for('admin_page', table_name='images'))
 

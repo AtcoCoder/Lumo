@@ -102,7 +102,8 @@ class BaseModel(Base):
             'City': ['properties'],
             'User': ['properties'],
             'Property': ['images', 'amenities'],
-            'Amenity': ['properties']
+            'Amenity': ['properties'],
+            'Image': []
         }
         result = models.db.all(cls)
         objs = []
