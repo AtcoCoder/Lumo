@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Property - Lumo App{% endblock %}
+
+{% block content %}
+<form class="text-center" method="POST">
+    <div class="mb-3">
+        <label for="area" class="form-label">Area</label>
+        <select class="form-select" id="area" name="area">
+            <option value="" disabled selected>Select an area</option>
+            {% for area in areas %}
+            <option value="{{ area.id }}">{{ area.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary btn-msub">Next</button>
+</form>
+
+{% endblock %}

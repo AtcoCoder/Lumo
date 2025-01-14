@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Cities</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+
+
+<h2>Cities in {{ area.name }}</h2>
+<div class="table-responsive">
+
+<table class="table table-striped">
+
+    <thead>
+
+    <tr>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for city in cities %}
+    <tr>
+        <td>{{ city.name }}</td>
+        <td>
+            <a class="btn btn-primary" href="{{ url_for('admin_edit', table_name='cities', id=city.id) }}">Edit</a>
+            <!-- <a href="/admin/cities/delete/{{ city.id }}">Delete</a> -->
+            <form method="POST" action="/admin/cities/delete/{{ city.id }}" style="display:inline;">
+                <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+        <a href="/admin">Back to Admin Panel</a>
+    </div>
+</body>
+</html>

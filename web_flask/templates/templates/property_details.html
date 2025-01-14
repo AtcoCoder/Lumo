@@ -1,0 +1,27 @@
+<h2>Property Details: {{ property.title }}</h2>
+
+<h3>Images</h3>
+<div>
+    {% for image in images %}
+    <div>
+        <img src="{{ image.url }}" alt="Property Image" width="200">
+        <a href="{{ url_for('delete_image', image_id=image.id) }}">Delete</a>
+    </div>
+    {% endfor %}
+</div>
+<form method="POST" enctype="multipart/form-data">
+    <label>Add Image</label>
+    <input type="file" name="new_image">
+    <button type="submit">Upload</button>
+</form>
+
+<h3>Amenities</h3>
+<form method="POST">
+    {% for amenity in amenities %}
+    <div>
+        <input type="checkbox" name="amenities" value="{{ amenity.id }}" {% if amenity in property.amenities %}checked{% endif %}>
+        {{ amenity.name }}
+    </div>
+    {% endfor %}
+    <button type="submit">Save Amenities</button>
+</form>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile - Lumo App{% endblock %}
+{% block content %}
+<form method="POST" action="/edit-profile">
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Username" name="username" value="{{ user.username }}" required>
+    </div>
+    <div class="mb-3">
+        <input type="email" class="form-control" placeholder="Email" name="email" value="{{ user.email }}" required>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Phone Number" name="phone" value="{{ user.phone }}" required>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="WhatsApp Number (Optional)" name="whatsapp" value="{{ user.whatsapp }}">
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="New Password" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Lumo App{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-4">Results for {{ search_query }}:</h1>
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for property in properties %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src="{{ property.images[0].image_url }}" class="bd-placeholder-img card-img-top uniform-img" alt="Property Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ property.title }}</h5>
+                        <p class="card-text">{{ property.description }}</p>
+                        <p>
+                            <strong>
+                                Price: D{{ property.price | currency_format }}
+                            </strong>
+                            {% if property.property_type == 'rent' %} per month{% endif %}
+                        </p>
+                        <p><strong>Type:</strong> {{ property.property_type }}</p>
+                        <p><strong>Location:</strong> {{ property.location }}</p>
+                        <a href="/properties/{{ property.id }}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
