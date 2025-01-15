@@ -172,6 +172,9 @@ def add_property():
         return redirect(url_for('login'))
     if request.method == 'POST':
         region_id = request.form.get('region')
+        if not region_id:
+            flash('Select a region')
+            return redirect(url_for('add_property'))
         return redirect(url_for('add_p_area', region_id=region_id))
     all_regions = Region.get_all()
     return render_template('add_property_rr.html', regions=all_regions)
@@ -186,10 +189,9 @@ def add_p_area(region_id):
 
     if request.method == 'POST':
         area_id = request.form.get('area')
-        area = Area.get(area_id)
-        if not area:
-            return jsonify(message='Area Not Found'), 400
-        return redirect(url_for('add_property_c', area_id=area.id))
+        if not area_id:
+            return redirect(url_for('add_p_area', region_id=region_id))
+        return redirect(url_for('add_property_c', area_id=area_id))
     region = Region.get(region_id)
     if not region:
         return jsonify(messge='Region Not Found'), 400
