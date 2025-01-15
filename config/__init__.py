@@ -42,8 +42,5 @@ CONFIGs = {
     'TEST': TestingConfig
 }
 
-<<<<<<< HEAD
-CURRENT_CONFIG = ProductionConfig
-=======
+
 CURRENT_CONFIG = CONFIGs[os.getenv('CONFIG')]
->>>>>>> omar
