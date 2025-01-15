@@ -37,4 +37,4 @@ class TestingConfig(Config):
     JWT_SECRET_KEY = 'secret_key'
 
 
-CURRENT_CONFIG = DevelopmentConfig
+CURRENT_CONFIG = ProductionConfig
