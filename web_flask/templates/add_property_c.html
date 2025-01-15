@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 {% set exclude_navbar = true %}
-{% block title %}Add Property - Lumo App{% endblock %}
+{% block title %}Add Property{% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <form class="text-center" method="POST" action="/properties/add">
     <div class="mb-3">
         <label for="region" class="form-label">Region</label>
