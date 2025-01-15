@@ -1,5 +1,9 @@
 """Init module"""
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 class Config(object):
@@ -9,9 +13,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     """Production configurations"""
-    DATABASE_URI = ''
-    SECRET_KEY = ''
-    JWT_SECRET_KEY = ''
+    DATABASE_URL = os.getenv('DATABASE_URL')        
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
 
 
 class DevelopmentConfig(Config):
@@ -32,4 +36,4 @@ class TestingConfig(Config):
     JWT_SECRET_KEY = 'secret_key'
 
 
-CURRENT_CONFIG = DevelopmentConfig
+CURRENT_CONFIG = ProductionConfig
