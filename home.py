@@ -209,6 +209,7 @@ def add_property_c(area_id):
         city_id = request.form.get('city')
         city = City.get(city_id)
         if not city:
+            print('Not city provided')
             flash('Select a city')
             return redirect(url_for('add_property_c', area_id=area_id))
         location = city.return_location()
