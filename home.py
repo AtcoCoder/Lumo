@@ -173,7 +173,7 @@ def add_property():
     if request.method == 'POST':
         region_id = request.form.get('region')
         if not region_id:
-            flash('Select a region')
+            flash('Select a region to proceed')
             return redirect(url_for('add_property'))
         return redirect(url_for('add_p_area', region_id=region_id))
     all_regions = Region.get_all()
@@ -190,6 +190,7 @@ def add_p_area(region_id):
     if request.method == 'POST':
         area_id = request.form.get('area')
         if not area_id:
+            flash('Select an area to proceed')
             return redirect(url_for('add_p_area', region_id=region_id))
         return redirect(url_for('add_property_c', area_id=area_id))
     region = Region.get(region_id)
@@ -206,10 +207,10 @@ def add_p_area(region_id):
 def add_property_c(area_id):
     if request.method == 'POST':
         city_id = request.form.get('city')
-        print(city_id)
         city = City.get(city_id)
         if not city:
-            return jsonify(message='City Not Found'), 400
+            flash('Select a city')
+            return redirect(url_for('add_property_c', area_id=area_id))
         location = city.return_location()
         title = request.form.get('title')
         description = request.form.get('description')
@@ -217,6 +218,13 @@ def add_property_c(area_id):
         property_type = request.form.get('type')
         files = request.files.getlist('images[]')
         image_urls = []
+        if None in [title, description, price, property_type]:
+            flash('Missing field')
+            return redirect(url_for('add_property_c', area_id=area_id))
+
+        if property_type not in ['rent', 'sale']:
+            flash('Property be must for rent or sale')
+            return redirect(url_for('add_property_c', area_id=area_id))
 
         if len(files) < 5:
             flash("Please enter at least 5 images")

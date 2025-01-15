@@ -3,6 +3,15 @@
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <form class="text-center" method="POST" action="/properties/add">
     <div class="mb-3">
         <label for="region" class="form-label">Region</label>
