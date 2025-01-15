@@ -2,6 +2,14 @@
 {% block title %}Add Property - Lumo App{% endblock %}
 
 {% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+<p class="flash">{{ message }}</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <form class="text-center" method="POST">
     <div class="mb-3">
         <label for="area" class="form-label">Area</label>

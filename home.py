@@ -87,7 +87,7 @@ def login():
         password = data.get('password')
         user = User.get_by_email(email)
         if not user:
-            flash("That email does not exist, please try again.")
+            flash("That email does not exist, sign up instead.")
             return redirect(url_for('login'))
         elif not check_password_hash(user.password_hash, password):
             flash('Password incorrect, please try again.')
