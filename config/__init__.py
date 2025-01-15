@@ -36,5 +36,14 @@ class TestingConfig(Config):
     TESTING = True
     JWT_SECRET_KEY = 'secret_key'
 
+CONFIGs = {
+    'PRODUCTION': ProductionConfig,
+    'DEVELOPMENT': DevelopmentConfig,
+    'TEST': TestingConfig
+}
 
+<<<<<<< HEAD
 CURRENT_CONFIG = ProductionConfig
+=======
+CURRENT_CONFIG = CONFIGs[os.getenv('CONFIG')]
+>>>>>>> omar
