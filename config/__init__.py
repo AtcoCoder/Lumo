@@ -20,14 +20,15 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     """Development configurations"""
-    DATABASE_URI = 'mysql+mysqlconnector://atcocoder:password@localhost/Lumo'
-    SQLALCHEMY_DATABASE_URI = DATABASE_URI
+    DATABASE_URL = 'mysql+mysqlconnector://atcocoder:password@localhost/Lumo'
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS  = False
     DEBUG = True
     SECRET_KEY = 'dev'
     JWT_SECRET_KEY = 'secret_key'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=30)
+    ADMIN_ID = 'bf9dae03-2e21-4336-9c45-d7943255e05b'
 
 class TestingConfig(Config):
     """Testing Configurations"""
@@ -36,4 +37,4 @@ class TestingConfig(Config):
     JWT_SECRET_KEY = 'secret_key'
 
 
-CURRENT_CONFIG = ProductionConfig
+CURRENT_CONFIG = DevelopmentConfig

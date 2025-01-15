@@ -14,6 +14,7 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from flask_login import login_required
 from functools import wraps
 import os
+from config import CURRENT_CONFIG
 import datetime
 
 
@@ -28,7 +29,7 @@ def admin_only(f):
         # If id is not 1 then return abort with 403 error
         if current_user.is_anonymous:
             return abort(403)
-        if current_user.id != 'bf9dae03-2e21-4336-9c45-d7943255e05b':
+        if current_user.id != CURRENT_CONFIG.ADMIN_ID:
             return abort(403)
         # Otherwise continue with the route function
         return f(*args, **kwargs)
