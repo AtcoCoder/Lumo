@@ -362,8 +362,8 @@ def edit_current_user():
         for key in request.form:
             if key not in cant_edits:
                 value = request.form[key]
-                if key == 'is_active':
-                    value = eval(value)
+                if key == 'phone':
+                    key = 'phone_number'
                 setattr(current_user, key, value)
         password = request.form.get('password')
         if password:
