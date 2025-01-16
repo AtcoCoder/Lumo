@@ -342,7 +342,7 @@ def edit_property(property_id):
     )
 
 @app.route(
-    '/users/me/edit'
+    '/users/me/edit',
     methods=['GET', 'POST']
 )
 @login_required
