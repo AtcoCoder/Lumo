@@ -343,6 +343,7 @@ def edit_property(property_id):
 
 @app.route(
     '/users/me/edit'
+    methods=['GET', 'POST']
 )
 @login_required
 def edit_current_user():
