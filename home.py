@@ -346,6 +346,35 @@ def edit_property(property_id):
 )
 @login_required
 def edit_current_user():
+
+    if request.method == 'POST':
+        cant_edits = [
+                '__class__',
+                'created_at',
+                'updated_at', 
+                'properties',
+                '__class__',
+                'password'
+            ]
+
+        
+        for key in request.form:
+            if key not in cant_edits:
+                value = request.form[key]
+                if key == 'is_active':
+                    value = eval(value)
+                setattr(current_user, key, value)
+        password = request.form.get('password')
+        if password:
+            hash_password = generate_password_hash(
+                password,
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            current_user.password_hash = hash_password
+        current_user.save() 
+        return redirect(url_for('get_current_user', current_user=current_user))
+
     return render_template('edit_me.html', user=current_user)
 
 
