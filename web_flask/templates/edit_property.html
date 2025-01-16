@@ -1,20 +1,73 @@
+
 {% extends "base.html" %}
 {% block title %}Edit Property{% endblock %}
 {% block content %}
-<form method="POST" action="/edit-property/{{ property.id }}">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p class="flash">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+<form method="POST" action="/properties/{{ property.id }}/edit" enctype="multipart/form-data" class="mx-auto" style="max-width: 600px;">
     <div class="mb-3">
         <input type="text" class="form-control" placeholder="Title" name="title" value="{{ property.title }}" required>
     </div>
     <div class="mb-3">
-        <textarea class="form-control" placeholder="Description" name="description" rows="3">{{ property.description }}</textarea>
+        <textarea class="form-control" placeholder="Description" name="description" rows="3" required>{{ property.description }}</textarea>
     </div>
     <div class="mb-3">
         <input type="number" class="form-control" placeholder="Price" name="price" value="{{ property.price }}" required>
     </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if property.is_active %}checked{% endif %}>
-        <label class="form-check-label" for="is_active">Active</label>
+    <div class="d-flex justify-content-center mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if property.is_active %}checked{% endif %}>
+            <label class="form-check-label" for="is_active">Active</label>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+
+    <!-- Display Property Images -->
+    <div class="mb-4">
+        <h5 class="text-center">Property Images</h5>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for image in property.images %}
+            <div class="position-relative me-3 mb-3">
+                <img src="{{ image.image_url }}" alt="Property Image" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                <a href="/images/{{ image.id }}/delete" class="btn btn-danger btn-sm" style="position: absolute; top: 5px; right: 5px;">Delete</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Upload New Images -->
+    <div class="mb-3">
+        <label for="new-images" class="form-label">Add New Images</label>
+        <input type="file" class="form-control" id="new-images" name="images[]" multiple accept="image/png, image/jpeg, image/jpg, image/gif">
+    </div>
+
+    <!-- List Amenities -->
+    <div class="mb-4">
+        <h5 class="text-center">Select Amenities</h5>
+        <div class="d-flex flex-wrap justify-content-center">
+            {% for amenity in amenities %}
+            <div class="form-check me-3">
+                <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    name="amenities[]" 
+                    id="amenity-{{ amenity.id }}" 
+                    value="{{ amenity.id }}" 
+                    {% if amenity.id in property_amenities %}checked{% endif %}>
+                <label class="form-check-label" for="amenity-{{ amenity.id }}">{{ amenity.name }}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
 </form>
 {% endblock %}
