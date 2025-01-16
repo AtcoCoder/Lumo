@@ -227,7 +227,7 @@ def add_property_c(area_id):
             flash('Property be must for rent or sale')
             return redirect(url_for('add_property_c', area_id=area_id))
 
-        if len(files) < 5:
+        if files and len(files) < 5:
             flash("Please enter at least 5 images")
             return redirect(url_for('add_property_c', area_id=area_id))
         
@@ -290,13 +290,56 @@ def get_current_user():
     return render_template('current_user.html', user=current_user)
 
 @app.route(
-    '/properties/<property_id>/edit'
+    '/properties/<property_id>/edit',
+    methods=['GET', 'POST'],
+    strict_slashes=False
 )
 @login_required
 def edit_property(property_id):
     """Edit a property"""
     current_property = Property.get(property_id)
-    return render_template('edit_property.html', property=current_property)
+    if request.method == 'POST':
+        cant_edits = [
+            '__class__',
+            'created_at',
+            'updated_at', 
+            'properties',
+            '__class__',
+            'amenities[]'
+        ]
+        print(request.form)
+
+        for key in request.form:
+            if key not in cant_edits:
+                value = request.form[key]
+                if key == 'is_active':
+                    value = request.form[key] == 'on'
+                setattr(current_property, key, value)
+        files = request.files.getlist('images[]')
+        amenity_ids = request.form.getlist('amenities[]')
+        amenities = [Amenity.get(amenity_id) for amenity_id in amenity_ids]
+        current_property.amenities = amenities
+        image_urls = []
+        if files:
+            for file in files:
+                if file:
+                    file_path, image_url = get_file_path(file.filename)
+                    file.save(file_path)
+                    image_urls.append(image_url)
+
+        images = [Image(image_url=url, property_id=current_property.id) for url in image_urls]
+        [image.save() for image in images]
+        current_property.save() 
+        return redirect(url_for('get_current_user'))
+    amenities = Amenity.get_all()
+    amenity_ids = [amenity.id for amenity in current_property.amenities]
+
+    return render_template(
+    'edit_property.html',
+    property=current_property,
+    property_amenities=amenity_ids,
+    amenities=amenities
+    )
 
 @app.route(
     '/users/me/edit'
@@ -304,6 +347,35 @@ def edit_property(property_id):
 @login_required
 def edit_current_user():
     return render_template('edit_me.html', user=current_user)
+
+
+@app.route(
+    '/images/<image_id>/delete',
+    strict_slashes=False
+)
+@login_required
+def delete_property_image(image_id):
+    """Delete property image by current user"""
+    image = Image.get(image_id)
+    if not image:
+        flash("Image not found")
+        return redirect(request.referrer)
+    property = Property.get(image.property_id)
+    if not property:
+        flash("Property don't exist")
+        return redirect(request.referrer)
+    if property.user_id != current_user.id:
+        flash("Unauthorized action!")
+        return redirect(request.referrer)
+    
+    try:
+        os.remove(image.image_url)
+    except FileNotFoundError:
+        print("File Deleted")
+        pass
+    image.delete()
+    flash("Image deleted successfully")
+    return redirect(request.referrer)
 
 
 @app.route(
@@ -319,6 +391,10 @@ def search():
         return render_template('search.html', properties=properties, search_query=search_query)
     return render_template(url_for('home'))
 
+
+####################################################################################
+####                            Admin Users Routes                              ####
+####################################################################################
 
 @app.route('/admin')
 @admin_only
@@ -406,22 +482,11 @@ def admin_edit(table_name, id):
         item.save() 
         return redirect(url_for('admin_page', table_name=table_name))
 
-    # relationship_dict = {
-    #     'Region': ['areas'],
-    #     'Area': ['cities'],
-    #     'City': ['properties'],
-    #     'User': ['properties'],
-    #     'Property': ['images', 'amenities'],
-    #     'Amenity': ['properties'],
-    #     'Image': []
-    # }
-    # relationships = relationship_dict[item.__class__.__name__]
     item_dict = item.to_dict()
     for cant_edit in cant_edits:
         if cant_edit in item_dict:
             del item_dict[cant_edit]
-    # for relationship in relationships:
-    #     item_dict[relationship] = item.its(relationship)
+
     return render_template('edit_item.html', table_name=table_name, item=item_dict)
 
 @app.route('/admin/<table_name>/view/<id>', methods=['GET', 'POST'])
