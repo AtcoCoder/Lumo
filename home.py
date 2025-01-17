@@ -307,7 +307,6 @@ def edit_property(property_id):
             '__class__',
             'amenities[]'
         ]
-        print(request.form)
 
         for key in request.form:
             if key not in cant_edits:
@@ -377,6 +376,17 @@ def edit_current_user():
         return redirect(url_for('get_current_user', current_user=current_user))
 
     return render_template('edit_me.html', user=current_user)
+
+
+@app.route('/users/me/delete')
+@login_required
+def delete_current_user():
+    '''Deletes authenticated user'''
+    properties = current_user.properties
+    [property.delete() for property in properties]
+    current_user.delete()
+    logout()
+    redirect(url_for('home')) 
 
 
 @app.route(
