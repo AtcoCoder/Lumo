@@ -173,7 +173,7 @@ $ pip install -r requirement.txt
 ```
 
 #### 3. configure the Database:
-* Update the config/ init file with your MySQL credentials.
+* Update the config/ init file. Replace the MySQL credentials in curl brackets with yours.
 
 `$ vim config/__init__.py`
 ```vim
@@ -183,15 +183,15 @@ $ pip install -r requirement.txt
 .
 .
 .
-CURRENT_CONFIG.DATABASE_URI = 'database uri with your credentials'
+CURRENT_CONFIG.DATABASE_URI = 'mysql+mysqlconnector://{your_mysql_username}:{password}@localhost/{database_name}'
 ```
 
 #### 4. Run the Application
 * Run the flask web app:
-`$ python3 -m web_flask.run`
+`$ CONFIG=DEVELOPMENT python3 -m web_flask.run`
 
 * Run the api:
-`$ python3 -m api.v1.app`
+`$ CONFIG=DEVELOPMENT python3 -m api.v1.app`
 
 ### Accessing the Application
 * Open your browser and navigat to `http://localhost:500`.
