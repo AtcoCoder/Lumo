@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}User Settings{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Sidebar Profile Menu -->
+        <div class="col-md-4 col-lg-3">
+            <div class="bg-light p-4 rounded shadow" style="min-height: 400px;">
+                <h4 class="text-center mb-4">Settings</h4>
+                <ul class="list-group" id="settings-menu">
+                    <li class="list-group-item active" onclick="showForm('personal-details')">Personal Details</li>
+                    <li class="list-group-item" onclick="showForm('change-phone')">Change Phone Number</li>
+                    <li class="list-group-item" onclick="showForm('change-whatsapp')">Change WhatsApp Number</li>
+                    <li class="list-group-item" onclick="showForm('change-email')">Change Email</li>
+                    <li class="list-group-item" onclick="showForm('change-password')">Change Password</li>
+                    <li class="list-group-item" onclick="showForm('delete-account')">Delete My Account</li>
+                    <li class="list-group-item" onclick="logout()">Logout</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card Content for Forms -->
+        <div class="col-md-8 col-lg-9" style="min-height: 500px;">
+            <div class="bg-light p-4 rounded shadow text-center" id="settings-content" style="min-height: 400px;">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <p class="flash">{{ message }}</p>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <!-- Default Form: Personal Details -->
+                <form method="post" id="personal-details-form" class="p-5">
+                    <div class="mb-3">
+                        <label for="username" class="col-form-label">Username</label>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-lumo">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * Show the form for the clicked setting and highlight the active menu item.
+     * @param {string} formId - The ID of the form to display.
+     */
+    function showForm(formId) {
+        // Reset active state for all menu items
+        document.querySelectorAll('#settings-menu .list-group-item').forEach(item => item.classList.remove('active'));
+        
+        // Set the clicked item as active and match the background color with the body
+        const menuItem = document.querySelector(`#settings-menu .list-group-item[onclick="showForm('${formId}')"]`);
+        menuItem.classList.add('active');
+        // menuItem.style.backgroundColor = window.getComputedStyle(document.body).backgroundColor;
+
+        // Update the content in the settings card
+        const settingsContent = document.getElementById('settings-content');
+        switch (formId) {
+            case 'personal-details':
+                settingsContent.innerHTML = `
+                    <form method="post" id="personal-details-form" class="p-5">
+                        <div class="mb-3">
+                            <label for="username" class="col-form-label">Username</label>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-lumo">Save Changes</button>
+                    </form>
+                `;
+                break;
+            case 'change-phone':
+                settingsContent.innerHTML = `
+                    <form method="post" id="change-phone-form" class="p-5">
+                        <div class="mb-3">
+                            <label for="phone" class="col-form-label">Phone</label>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone_number }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-lumo">Save Changes</button>
+                    </form>
+                `;
+                break;
+            case 'change-whatsapp':
+                settingsContent.innerHTML = `
+                    <form method="post" id="change-whatsapp-form" class="p-5">
+
+
+                        <div class="mb-3">
+                            <label for="whatsapp" class="col-form-label">WhatsApp Number</label>
+                        </div>
+                        <div class="mb-3">
+                            {% if user.whatsapp %}
+                            <input type="tel" class="form-control" id="whatsapp" name="whatsapp" value="{{ user.whatsapp }}" required>
+                            {% else %}
+                            <input type="tel" class="form-control" id="whatsapp" name="whatsapp" placeholder="Enter new WhatsApp number" required>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-lumo">Save Changes</button>
+                    </form>
+                `;
+                break;
+            case 'change-email':
+                settingsContent.innerHTML = `
+                    <form method="post" id="change-email-form" class="p-5">
+                        <div class="mb-3">
+                            <label for="email" class="col-form-label">Email</label>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-lumo">Save Changes</button>
+                    </form>
+                `;
+                break;
+            case 'change-password':
+                settingsContent.innerHTML = `
+                    <form method="post" id="change-password-form" class="p-5">
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="current-password" name="current-password" placeholder="Enter current password" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" id="new-password" placeholder="Enter new password" name="new-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-lumo">Save Changes</button>
+                    </form>
+                `;
+                break;
+            case 'delete-account':
+                settingsContent.innerHTML = `
+                    <form id="delete-account-form" class="p-5">
+                        <p class="text-danger">Are you sure you want to delete your account? This action is irreversible.</p>
+                        <a href="/users/me/delete" class="btn btn-danger">Delete My Account</a>
+                    </form>
+                `;
+                break;
+            default:
+                // Default case: Load Personal Details
+                showForm('personal-details');
+        }
+    }
+
+    /**
+     * Logout function (redirects to the logout URL).
+     */
+    function logout() {
+        window.location.href = '/logout';
+    }
+</script>
+{% endblock %}

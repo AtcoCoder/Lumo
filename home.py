@@ -364,18 +364,27 @@ def edit_current_user():
                 if key == 'phone':
                     key = 'phone_number'
                 setattr(current_user, key, value)
-        password = request.form.get('password')
-        if password:
+                flash(f'{key.capitalize().replace('_', ' ')} successfully changed.')
+        current_password = request.form.get('current-password')
+        if current_password:
+            is_valid = check_password_hash(current_user.password_hash, current_password)
+            if not is_valid:
+                flash('Incorrect password')
+                return redirect(request.referrer)
+        new_password = request.form.get('new-password')
+        if new_password:
             hash_password = generate_password_hash(
-                password,
+                new_password,
                 method='pbkdf2:sha256',
                 salt_length=8
             )
             current_user.password_hash = hash_password
+            flash('Password successfully changed')
         current_user.save() 
-        return redirect(url_for('get_current_user', current_user=current_user))
+        return redirect(request.referrer)
 
-    return render_template('edit_me.html', user=current_user)
+    # return render_template('edit_me.html', user=current_user)
+    return render_template('settings.html', user=current_user)
 
 
 @app.route('/users/me/delete')
@@ -386,7 +395,7 @@ def delete_current_user():
     [property.delete() for property in properties]
     current_user.delete()
     logout()
-    redirect(url_for('home')) 
+    return redirect(url_for('home')) 
 
 
 @app.route(
@@ -411,7 +420,6 @@ def delete_property_image(image_id):
     try:
         os.remove(image.image_url)
     except FileNotFoundError:
-        print("File Deleted")
         pass
     image.delete()
     flash("Image deleted successfully")
