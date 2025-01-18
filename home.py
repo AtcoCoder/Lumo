@@ -354,7 +354,8 @@ def edit_current_user():
                 'updated_at', 
                 'properties',
                 '__class__',
-                'password'
+                'current-password',
+                'new-password'
             ]
 
         
