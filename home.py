@@ -364,7 +364,7 @@ def edit_current_user():
                 if key == 'phone':
                     key = 'phone_number'
                 setattr(current_user, key, value)
-                flash(f'{key.capitalize().replace('_', ' ')} successfully changed.')
+                flash(f"{key.capitalize().replace('_', ' ')} successfully changed.")
         current_password = request.form.get('current-password')
         if current_password:
             is_valid = check_password_hash(current_user.password_hash, current_password)
