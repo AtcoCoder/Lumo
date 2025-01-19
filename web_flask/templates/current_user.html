@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row">
-<div class="col-lg-3 me-4 bg-light p-3 rounded shadow mb-5" style="height: 400px">
+<div class="col-lg-3 me-auto bg-light p-3 rounded shadow mb-5" style="height: 400px">
         <div class="col text-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
@@ -41,7 +41,7 @@
             <a href="/users/me/delete" class="link-danger" style="text-decoration: none;">Delete Account</a>
         </div>
 </div>
-<div class="album col-lg-8 ms-5 py-5 bg-light rounded shadow">
+<div class="album col-lg-8 ms-auto py-5 bg-light rounded shadow">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             {% for property in user.properties %}
