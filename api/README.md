@@ -88,7 +88,7 @@ ___
 #### Headers
 ***Authentication*** `Bearer Token`
 
-#### Example request header for john
+#### Example request header
 ```json
 {
     "authorization": "Bearer [your_token]"
