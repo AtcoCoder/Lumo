@@ -1,3 +1,6 @@
+{% extends 'admin_base.html' %}
+{% block title %}View Property{% endblock %}
+{% block content %}
 <h2>Property Details: {{ property.title }}</h2>
 
 <h3>Images</h3>
@@ -25,3 +28,5 @@
     {% endfor %}
     <button type="submit">Save Amenities</button>
 </form>
+
+{% endblock %}

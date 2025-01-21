@@ -3,18 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>{% block title %}{% endblock %} - Lumo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/lumo_icon.png') }}"/>
+    <style>
+        body {
+            background-color: #E3F7FF;
+            /* background-color: #bae0ff; */
+            color: #414141;
+        }
+        .navbar-brand {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .body-brand {
+            color: #1ABCFE;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navbar-nav .nav-link {
+            color: #ffffff;
+        }
+        .btn-sell {
+            background-color: #ff9736;
+            color: white;
+            font-weight: bold;
+            border-radius: 20px;
+        }
+        footer {
+            background-color: #D7EFF9;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .form-control {
+            max-width: 400px;
+            margin: auto;
+        }
+        .form-select {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .form-label {
+            margin: auto;
+        }
+
+        .btn-msub {
+            margin: auto;
+        }
+
+        .flash {
+            color: #ee6f57;
+            text-align: center;
+        }
+
+        #image-urls-container .input-group {
+        display: flex;
+        align-items: center;
+        }
+
+        #image-urls-container .input-group input {
+            flex-grow: 1;
+        }
+
+        #image-urls-container .input-group button {
+            margin-left: 10px;
+        }
+        .uniform-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+ 
+
+        .card {
+            height: 575px;
+            display: flex;
+            flex-direction: column;
+        }
+        /* .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        } */
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-text {
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            display: -webkit-box;
+            -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical;
+        }
+        .bg-style {
+            background-color: #008ECC;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        img.img-fluid {
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h4, h5 {
+            color: #333;
+        }
+        #settings-menu .active {
+            background-color: #008ECC;
+        }
+        .btn-lumo {
+            background-color: #008ECC;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Admin Dashboard</h1>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <nav class="navbar navbar-expand-lg bg-style">
+        <div class="container">
+            <!-- <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='images/lumo_logo_bg_dark.png') }}" alt="Lumo" width="75" height="24">
+            </a> -->
+            <a class="navbar-brand" href="/admin"><strong>Admin Panel</strong></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/properties">Properties</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/regions">Regions</a><a class="nav-link" href="/admin/add/region">+</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/areas">Areas</a> <a class="nav-link" href="/admin/add/area">+</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/cities">Cities</a> <a class="nav-link" href="/admin/add/city">+</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/amenities">Amenities</a> <a class="nav-link" href="/admin/add/amenity">+</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="/admin/images">Images</a></li> -->
+                    <li class="nav-item dropdown">
+                        <!-- <a class="nav-link" href="/logout">Logout</a> -->
+                        <div class="dropdown text-end me-3">
+                        <!-- <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                        </a> -->
+                        <!-- <a href="#" class="nav-link text-white"> -->
+                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white" class="bi bi-person-circle" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                            </svg>
+                        </a>
+                        <ul class="dropdown-menu text-small" style="">
+                            <li><a class="dropdown-item" href="{{ url_for('edit_current_user' )}}">Settings</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('get_current_user') }}">Profile</a></li>
+                            <li><a class="dropdown-item" href="/">Home</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">logout</a></li>
+                        </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
     <footer>
-        <p>&copy; 2025 Admin Panel</p>
+        <p>&copy; 2025 Lumo. All rights reserved.</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

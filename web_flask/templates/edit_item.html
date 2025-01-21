@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit {{ table_name }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
+{% extends 'admin_base.html' %}
+{% block title %}Edit {{ table_name }}{% endblock %}</title>
+
+{% block content %}
         <h2>Edit {{ table_name }} Member</h2>
         <form method="POST" action="{{ url_for('admin_edit', table_name=table_name, id=item.id) }}">
             {% for key, value in item.items() %}
@@ -19,6 +13,5 @@
             <button type="submit" class="btn btn-primary">Save Changes</button>
             <a href="{{ url_for('admin_page', table_name=table_name) }}" class="btn btn-secondary">Cancel</a>
         </form>
-    </div>
-</body>
-</html>
+
+{% endblock %}
