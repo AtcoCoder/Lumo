@@ -289,7 +289,6 @@ def add_property_image(property_id):
     if not image_url:
         return jsonify(message='Missing image url'), 400
     image = Image(image_url=image_url, property_id=property_id)
-    print(image)
     image.save()
     return jsonify(message='Image successfully added.')
 

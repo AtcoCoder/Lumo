@@ -28,15 +28,18 @@ def get_property_by(property_id):
     return jsonify(property=property_dict)
 
 
-@app_views.route('/properties/search', strict_slashes=False)
+@app_views.route(
+    '/properties/search',
+    strict_slashes=False,
+)
 def search_property():
     """Search a property by keyword"""
-    if request.method == 'POST':
-        search_query = request.form.get('search')
-        properties = Property.search(search_property)
-        results = []
-        for property in properties:
-            result = property.to_dict_with('images', property.images)
-            result['amenities'] = property.its('amenities')
-            results.append(result)
-        return jsonify(properties=results)
+    data = request.get_json()
+    search_query = data.get('search')
+    properties = Property.search(search_query)
+    results = []
+    for property in properties:
+        result = property.to_dict_with('images', property.images)
+        result['amenities'] = property.its('amenities')
+        results.append(result)
+    return jsonify(properties=results)
