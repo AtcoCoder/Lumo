@@ -6,12 +6,16 @@
 #### attributes
 *** username *** `string`
 [required] The name that will appear as the owner of a listing.
+
 *** email *** `string`
 [required] Email address of the user.
+
 *** phone number *** `string`
 [required] Phone number of the user.
+
 *** whatsapp *** `string`
 [optional] WhatsApp number of the user.
+
 *** password *** `string`
 [required] User's password
 
