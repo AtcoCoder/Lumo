@@ -38,6 +38,10 @@
 }
 ```
 
+____
+
+
+
 * POST /auth/login: Log in an existing user.
 * GET /auth/logout: Log out the user.
 * GET /users/me: Get the currently authenticated user's details.
