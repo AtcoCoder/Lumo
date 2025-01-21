@@ -10,7 +10,7 @@
 ***email*** `string`
 [required] Email address of the user.
 
-***phonenumber *** `string`
+***phone number*** `string`
 [required] Phone number of the user.
 
 ***whatsapp*** `string`
@@ -26,7 +26,8 @@
     "username": "john",
     "email": "john@email.com",
     "phone_number": "12345678",
-    "whatsapp": "12345678"
+    "whatsapp": "12345678",
+    "password": "password"
 }
 ```
 
