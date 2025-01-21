@@ -32,15 +32,15 @@ This document provides an overview of the application's features, architecture, 
 
 ## Technology Stack
 ### Backend
-* Framework: Python Flask
+* Framework: ![Flask](static/images/flask_logo.png)
 * Authentication: Flask-Login (app) and Flask JWT Extension (api)
 * ORM: SQLAlchemy
-* Database: MYSQL
+* Database: ![MySQL](static/images/mysql_logo.png)
 
 ### Frontend
-* Templating Engine: Jinja2
-* CSS Framework: Bootstrap
-* Additional Libraries: Custom JavaScript for dynamic interactions.
+* Templating Engine: ![Jinja2](static/images/jinja_logo.png)
+* CSS Framework: ![Bootstrap](static/images/bootstrap_logo.png)
+* Additional Libraries: ![JS](static/images/js_logo.png)
 
 ### Deployment
 * Server: Hosted on Python Anywhere
