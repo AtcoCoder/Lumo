@@ -62,8 +62,8 @@ ___
 #### Example request body
 ```json
 {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzM3NDg0ODYzLCJqdGkiOiI3Y2JmODhlMC0xMDA3LTQ1NDItYmUwZS1kZTYyZmQxMjU3ZTIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoiYWRtaW4iLCJuYmYiOjE3Mzc0ODQ4NjMsImNzcmYiOiJlMWVjMmEwZC0wZDFkLTRlZjgtOTA5My0wMWFhYWJlOWRlYjAiLCJleHAiOjE3Mzc0ODg0NjMsInJvbGUiOiJBZG1pbiJ9.xnOW7SyRhWBzJZRFmzB32-3N8Ha0B1LM-M0V2EVnrls",
-    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNzQ4NDg2MywianRpIjoiM2FkYTE2NzMtY2ZiMy00NWMyLTk4NWUtZDlkOTMxZGYzYTdhIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJhZG1pbiIsIm5iZiI6MTczNzQ4NDg2MywiY3NyZiI6ImJiZTg3N2U1LTQwMzctNDVmYy1hYzNkLTc1MzMyZDE0NGUwOCIsImV4cCI6MTczNzQ4NjY2Mywicm9sZSI6IkFkbWluIn0.LyJRAB-olEMju6VSRNv6dapnzp5UTYhmTBvTZXGI4qg"
+    "access_token": "[your_token]",
+    "refresh_token": "[your_refresh_token]"
 }
 ```
 
