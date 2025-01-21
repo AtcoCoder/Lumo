@@ -82,6 +82,8 @@ ___
 ```
 #### successful response status code: `200`
 
+___
+
 ### GET /users/me: Get the currently authenticated user's details.
 #### Headers
 ***Authentication*** `Bearer Token`
