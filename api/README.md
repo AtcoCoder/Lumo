@@ -21,7 +21,6 @@
 
 #### Example request body
 ```json
-// request data
 {
     "username": "john",
     "email": "john@email.com",
