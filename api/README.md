@@ -3,21 +3,38 @@
 ## Authentication & User Management
 
 ### POST /auth/signup: Register a new user.
-#### attributes
+#### Parameters
 ***username*** `string`
 [required] The name that will appear as the owner of a listing.
 
-** email ** `string`
+***email*** `string`
 [required] Email address of the user.
 
-*** phone number *** `string`
+***phonenumber *** `string`
 [required] Phone number of the user.
 
-*** whatsapp *** `string`
+***whatsapp*** `string`
 [optional] WhatsApp number of the user.
 
-*** password *** `string`
+***password*** `string`
 [required] User's password
+
+#### Example
+```json
+// request data
+{
+    "username": "john",
+    "email": "john@email.com",
+    "phone_number": "12345678",
+    "whatsapp": "12345678"
+}
+
+
+// reponse data, status code 201
+{
+    "message": "User successfully created."
+}
+```
 
 * POST /auth/login: Log in an existing user.
 * GET /auth/logout: Log out the user.
