@@ -37,8 +37,7 @@ This document provides an overview of the application's features, architecture, 
 * ORM: SQLAlchemy
 
 ### Frontend
-![Jinja2](static/images/jinja_logo.png) ![Bootstrap](static/images/bootstrap_logo.png) ![JS](static/images/js_logo.png)
-
+![Jinja2](static/images/jinja_logo.png) ![Bootstrap](static/images/bootstrap_logo.png) ![JS](static/images/js_logo.png) ![HTML](static/images/html_logo.png) ![CSS](static/images/css_logo.png)
 ### Deployment
 * Server: Hosted on Python Anywhere
 * Static Files: Served through Flask's static folder.
