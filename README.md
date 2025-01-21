@@ -34,12 +34,14 @@ This document provides an overview of the application's features, architecture, 
 ### Backend
 ![Flask](static/images/flask_logo.png) ![MySQL](static/images/mysql_logo.png)
 * Authentication: Flask-Login (app) and Flask JWT Extension (api)
-* ORM: SQLAlchemy
+* ORM:
+![SQLAlchemy](static/images/sqlal_logo.png)
 
 ### Frontend
 ![Jinja2](static/images/jinja_logo.png) ![Bootstrap](static/images/bootstrap_logo.png) ![JS](static/images/js_logo.png) ![HTML](static/images/html_logo.png) ![CSS](static/images/css_logo.png)
 ### Deployment
-* Server: Hosted on Python Anywhere
+![PythonAnywhere](static/images/pa_logo.png)
+
 * Static Files: Served through Flask's static folder.
 
 
