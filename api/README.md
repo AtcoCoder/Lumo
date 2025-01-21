@@ -38,13 +38,78 @@
 }
 ```
 
-____
+___
 
 
+### POST /auth/login: Log in an existing user.
+#### Parameters
+***email*** `string`
 
-* POST /auth/login: Log in an existing user.
-* GET /auth/logout: Log out the user.
-* GET /users/me: Get the currently authenticated user's details.
+[required] user's email address
+
+***password*** `string`
+
+[required] user's password
+
+#### Example request body
+```json
+{
+    "email": "john@email.com",
+    "password": "password"
+}
+```
+
+#### Example request body
+```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzM3NDg0ODYzLCJqdGkiOiI3Y2JmODhlMC0xMDA3LTQ1NDItYmUwZS1kZTYyZmQxMjU3ZTIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoiYWRtaW4iLCJuYmYiOjE3Mzc0ODQ4NjMsImNzcmYiOiJlMWVjMmEwZC0wZDFkLTRlZjgtOTA5My0wMWFhYWJlOWRlYjAiLCJleHAiOjE3Mzc0ODg0NjMsInJvbGUiOiJBZG1pbiJ9.xnOW7SyRhWBzJZRFmzB32-3N8Ha0B1LM-M0V2EVnrls",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTczNzQ4NDg2MywianRpIjoiM2FkYTE2NzMtY2ZiMy00NWMyLTk4NWUtZDlkOTMxZGYzYTdhIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOiJhZG1pbiIsIm5iZiI6MTczNzQ4NDg2MywiY3NyZiI6ImJiZTg3N2U1LTQwMzctNDVmYy1hYzNkLTc1MzMyZDE0NGUwOCIsImV4cCI6MTczNzQ4NjY2Mywicm9sZSI6IkFkbWluIn0.LyJRAB-olEMju6VSRNv6dapnzp5UTYhmTBvTZXGI4qg"
+}
+```
+
+___
+
+
+### GET /auth/logout: Log out the user.
+#### Headers
+***Authentication*** `Bearer Token`
+
+#### Example request header
+```json
+{
+    "authorization": "Bearer [your_token]"
+}
+```
+#### successful response status code: `200`
+
+### GET /users/me: Get the currently authenticated user's details.
+#### Headers
+***Authentication*** `Bearer Token`
+
+#### Example request header for john
+```json
+{
+    "authorization": "Bearer [your_token]"
+}
+```
+
+#### Example response
+```json
+{
+    "me": {
+        "__class__": "User",
+        "created_at": "2025-01-21T18:29:59",
+        "email": "john@email.com",
+        "id": "a0106dc7-cbae-4118-a879-648fbd4e6b15",
+        "phone_number": "12345609",
+        "properties": [],
+        "updated_at": "2025-01-21T18:29:59",
+        "username": "john",
+        "whatsapp": "12345609"
+    }
+}
+```
+
 * PATCH /users/me: Update the currently authenticated user's profile
 * DELETE /users/me: Deactivate/delete the currently authenticated user's account
 
