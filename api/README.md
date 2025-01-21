@@ -4,7 +4,7 @@
 
 ### POST /auth/signup: Register a new user.
 #### attributes
-** username ** `string`
+***username*** `string`
 [required] The name that will appear as the owner of a listing.
 
 ** email ** `string`
