@@ -19,7 +19,7 @@
 ***password*** `string`
 [required] User's password
 
-#### Example
+#### Example request body
 ```json
 // request data
 {
@@ -28,9 +28,11 @@
     "phone_number": "12345678",
     "whatsapp": "12345678"
 }
+```
 
 
-// reponse data, status code 201
+#### Example response
+```json
 {
     "message": "User successfully created."
 }
