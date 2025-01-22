@@ -441,6 +441,24 @@ def search():
     return render_template(url_for('home'))
 
 
+@app.route('/properties/<property_id>/delete')
+@login_required
+def delete_user_property(property_id):
+    property = Property.get(property_id)
+    if property.user_id != current_user.id:
+        flash('Not authorised to delete this property')
+        return redirect(request.referrer)
+    if not property:
+        flash('Property not found!', 'error')
+        return redirect(request.referrer)
+    property_images = property.images
+    property.delete()
+    for image in property_images:
+        image.delete()
+    flash('Property deleted successfully!', 'success')
+    return redirect(request.referrer)
+
+
 ####################################################################################
 ####                            Admin Users Routes                              ####
 ####################################################################################

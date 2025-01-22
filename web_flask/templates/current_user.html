@@ -55,6 +55,7 @@
                         <div class="btn-group">
                             <a href="/properties/{{ property.id }}" class="btn btn-sm btn-outline-secondary">View</a>
                             <a href="/properties/{{ property.id }}/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="/properties/{{ property.id }}/delete" onclick="return confirm('Are you sure you want to delete this property?');" class="btn btn-sm btn-outline-danger">Delete</a>
                         </div>
                     </div>
                 </div>
