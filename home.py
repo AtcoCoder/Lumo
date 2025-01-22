@@ -454,6 +454,13 @@ def delete_user_property(property_id):
     property_images = property.images
     property.delete()
     for image in property_images:
+        if not image:
+            flash('Image not found!', 'error')
+            return redirect(request.referrer or url_for('get_current_user'))
+        image_path = image.image_url
+
+        if os.path.exists(image_path):
+            os.remove(image_path)
         image.delete()
     flash('Property deleted successfully!', 'success')
     return redirect(request.referrer)
