@@ -112,7 +112,54 @@ ___
 }
 ```
 
-* PATCH /users/me: Update the currently authenticated user's profile
+___
+
+### PATCH /users/me: Update the currently authenticated user's profile
+#### Parameters
+***username*** `string`
+[optional] new username of user
+
+***email*** `string`
+[optional] new email address of user
+
+***phone_number*** `string`
+[optional] new phone number
+
+***whatsapp*** `string`
+[optional] new whatsapp number
+
+***password*** `string`
+[optional] new password
+
+#### Headers
+***Authentication*** `Bearer Token`
+
+#### Example request header
+```json
+{
+    "authorization": "Bearer [your_token]"
+}
+```
+
+#### Example request body
+```json
+{
+    "username": "new_username",
+    "email": "new_email",
+    "phone_number": "1349874",
+    "whatsapp": "1349874",
+    "password": "new_password"
+}
+```
+
+#### Example response
+```json
+{
+    "message": ""
+}
+```
+
+
 * DELETE /users/me: Deactivate/delete the currently authenticated user's account
 
 
