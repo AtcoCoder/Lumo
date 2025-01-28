@@ -301,6 +301,9 @@ def edit_property(property_id):
     if not current_property:
         flash('Property not Found')
         return redirect(request.referrer)
+    if not current_property.user_id != current_user.id:
+        flash('You are not authorized to edit this property')
+        return redirect(request.referrer)
     if request.method == 'POST':
         cant_edits = [
             '__class__',
