@@ -298,6 +298,9 @@ def get_current_user():
 def edit_property(property_id):
     """Edit a property"""
     current_property = Property.get(property_id)
+    if not current_property:
+        flash('Property not Found')
+        return redirect(request.referrer)
     if request.method == 'POST':
         cant_edits = [
             '__class__',
